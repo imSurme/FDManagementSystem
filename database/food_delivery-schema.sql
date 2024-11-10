@@ -12,7 +12,7 @@ CREATE TABLE Restaurants (
     city VARCHAR(50) NOT NULL,
     rating DECIMAL(2,1),
     rating_count VARCHAR(50),
-    average_cost INT CHECK(average_cost >= 0),
+    average_cost INT NOT NULL CHECK(average_cost >= 0),
     cuisine VARCHAR(100) NOT NULL,
     restaurant_address TEXT NOT NULL,
     PRIMARY KEY (restaurant_id),
@@ -42,5 +42,11 @@ CREATE TABLE Couriers (
 
 
 CREATE TABLE Menu (
-
+    menu_id INT AUTO_INCREMENT,
+    restaurant_id INT NOT NULL,
+    food_id INT NOT NULL,
+    price DECIMAL(10, 2) NOT NULL CHECK(price >= 0),
+    PRIMARY KEY (menu_id),
+    FOREIGN KEY (restaurant_id) REFERENCES Restaurants(restaurant_id),
+    FOREIGN KEY (food_id) REFERENCES Food(food_id)
 );
