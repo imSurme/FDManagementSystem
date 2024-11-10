@@ -24,7 +24,10 @@ CREATE TABLE Orders (
 );
 
 CREATE TABLE Food (
-
+    food_id INT AUTO_INCREMENT,
+    item_name VARCHAR(100) NOT NULL,
+    veg_or_non_veg ENUM('Veg', 'Non-veg') NOT NULL,
+    PRIMARY KEY (food_id)
 );
 
 CREATE TABLE Couriers (
