@@ -1,0 +1,5 @@
+- Some column names in Restaurant.csv were updated.
+- Menu.csv and Food.csv were added.
+- Data and schema files were added.
+- Restaurant Table, Menu Table, and Food Table were created in schema file.
+- Related data were inserted to these tables.
