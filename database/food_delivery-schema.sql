@@ -38,6 +38,8 @@ CREATE TABLE Couriers (
     restaurant_id INT NOT NULL,
     PRIMARY KEY (courier_id),
     FOREIGN KEY (restaurant_id) REFERENCES Restaurants(restaurant_id)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE
 );
 
 
