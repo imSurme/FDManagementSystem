@@ -35,7 +35,7 @@ CREATE TABLE Couriers (
     name VARCHAR(255) NOT NULL,
     gender VARCHAR(50) NOT NULL,
     birth_date DATE NOT NULL,
-    restaurant_id INT NOT NULL,
+    restaurant_id INT,
     PRIMARY KEY (courier_id),
     FOREIGN KEY (restaurant_id) REFERENCES Restaurants(restaurant_id)
     ON DELETE SET NULL
