@@ -10,7 +10,7 @@ body {
     margin: 0;
 }
 
-.signup, .login {
+.login {
     background-color: #fff;
     border-radius: 15px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
@@ -34,7 +34,7 @@ label {
     font-weight: bold;
 }
 
-input, select {
+input {
     display: block;
     width: 100%;
     margin-bottom: 15px;
