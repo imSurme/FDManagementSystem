@@ -1,4 +1,5 @@
 Progress of İbrahim Mert Sürme
 
-1. courier delivery service - couriers.csv file added to the tables folder
+1. couriers.csv file added to the tables folder
 2. couriers table created, and data inserted into table
+3. app.py, index.html, login.html, and styles.css created
