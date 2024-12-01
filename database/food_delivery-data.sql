@@ -1,12 +1,12 @@
 USE food_delivery;
 
-INSERT INTO Users ()
+INSERT INTO users ()
 VALUES
 -- Add your user data here
 ;
 
 
-INSERT INTO Restaurants (restaurant_id, user_id, restaurant_name, city, rating, rating_count, average_cost, cuisine, restaurant_address) 
+INSERT INTO restaurants (restaurant_id, user_id, restaurant_name, city, rating, rating_count, average_cost, cuisine, restaurant_address) 
 VALUES
 (567335, 41, 'AB FOODS POINT', 'Abohar', NULL, 'Too Few Ratings', 200, 'Beverages,Pizzas', "AB FOODS POINT, NEAR RISHI NARANG DENTAL CLINIC , NEAR IDBI BANK, ABOHAR"),
 (531342, 118, 'Janta Sweet House', 'Abohar', 4.4, '50+ ratings', 200, 'Sweets,Bakery', "Janta Sweet House, Bazar No.9, Circullar Road, Abohar"),
@@ -291,12 +291,12 @@ VALUES
 (554195, 4446, 'THE HUNGER OUT', 'Adityapur', NULL, 'Too Few Ratings', 200, 'North Indian,South Indian', "THE HUNGER OUT, Kasidih line no 1, near Sai glasses, near Durga Puja maidan, sakchi jamshedpur,india");
 
 
-INSERT INTO Orders ()
+INSERT INTO orders ()
 VALUES
 -- Add your order data here
 ;
 
-INSERT INTO Couriers (courier_id, name, gender, birth_date, restaurant_id)
+INSERT INTO couriers (courier_id, name, gender, birth_date, restaurant_id)
 VALUES
 (1, 'Jared Bennett', 'male', 2002-11-03, 567335),
 (2, 'Lee Davidson', 'male', 1983-02-24, 567335),
@@ -1150,7 +1150,7 @@ VALUES
 (850, 'Stanley Holt', 'male', 1998-08-25, 554195)
 ;
 
-INSERT INTO Menu (menu_id, restaurant_id, food_id, cuisine, price)
+INSERT INTO menu (menu_id, restaurant_id, food_id, cuisine, price)
 VALUES
 (0, 567335, 0, 'Beverages,Pizzas', 40.0),
 (328, 158203, 0, 'Beverages', 65.0),
@@ -29353,7 +29353,7 @@ VALUES
 (28195, 554195, 28195, 'North Indian,South Indian', 30.0),
 (28197, 554195, 28197, 'North Indian,South Indian', 40.0);
 
-INSERT INTO Food (food_id, item_name, veg_or_non_veg)
+INSERT INTO food (food_id, item_name, veg_or_non_veg)
 VALUES
 (0, 'Aloo Tikki Burger', 'Veg'),
 (1, 'Veg Creamy Burger', 'Veg'),
