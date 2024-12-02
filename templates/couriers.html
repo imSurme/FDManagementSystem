@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Couriers List</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <nav>
+        <ul class="navbar">
+            <li><a href="/">Home</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+{% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+        <ul class="flashes">
+            {% for category, message in messages %}
+                <li class="flash {{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+    <h1 class="courier title">Courier Data</h1>
+    <div class="list">
+        <ul>
+        {% for courier in couriers %}
+            <li>{{ courier['name'] }} - {{ courier['gender'] }} - {{ courier['birth_date'] }} - {{ courier['restaurant_id'] }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
