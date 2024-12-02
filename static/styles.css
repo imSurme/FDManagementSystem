@@ -146,10 +146,10 @@ nav .logo img {
 }
 
 img {
-    width: 100px;        /* Adjust the width */
-    height: 100px;        /* Maintain aspect ratio */
-    max-width: 100%;     /* Ensure the image doesn't overflow */
-    object-fit: contain; /* Ensure the image doesn't get stretched */
+    width: 100px;
+    height: 100px;
+    max-width: 100%;
+    object-fit: contain;
 }
 
 .title {
