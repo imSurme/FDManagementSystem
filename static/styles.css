@@ -5,7 +5,7 @@ body {
     font-family: sans-serif;
     line-height: 1.5;
     min-height: 100vh;
-    background: #f3f3f3;
+    background: #e3e3e3;
     flex-direction: column;
     margin: 0;
 }
@@ -38,7 +38,7 @@ button {
     border: none;
     color: white;
     cursor: pointer;
-    background-color: #4CAF50;
+    background-color: #455d7a;
     width: 100%;
     font-size: 16px;
 }
@@ -51,7 +51,7 @@ button {
 
 nav {
     width: 100%;
-    background-color: #4CAF50;
+    background-color: #455d7a;
     position: fixed;
     top: 0;
     left: 0;
@@ -87,7 +87,7 @@ nav .logo img {
 }
 
 .navbar a:hover {
-    background-color: #e3e3e3;
+    background-color: #f95959;
     border-radius: 5px;
 }
 
@@ -99,7 +99,6 @@ nav .logo img {
 }
 
 .flash {
-    background-color: #f0f0f0;
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 5px;
@@ -121,7 +120,7 @@ nav .logo img {
 
 .card:hover {
     transform: scale(1.05);
-    background-color: #4CAF50;
+    background-color: #f95959;
 }
 
 .card a {
