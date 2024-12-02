@@ -112,7 +112,8 @@ nav .logo img {
 .card-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    column-gap: 50px;
+    row-gap: 30px;
 }
 
 .card {
