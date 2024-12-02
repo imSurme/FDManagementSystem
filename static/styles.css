@@ -5,7 +5,7 @@ body {
     font-family: sans-serif;
     line-height: 1.5;
     min-height: 100vh;
-    background: #e3e3e3;
+    background: #a7bcb9;
     flex-direction: column;
     margin: 0;
 }
@@ -41,6 +41,11 @@ button {
     background-color: #455d7a;
     width: 100%;
     font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #f95959;
 }
 
 .wrap {
@@ -116,6 +121,7 @@ nav .logo img {
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
+    background: #e3e3e3;
 }
 
 .card:hover {
