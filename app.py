@@ -62,5 +62,29 @@ def logout():
     flash('You have been logged out', 'success')
     return redirect(url_for('login'))
 
+@app.route('/couriers')
+def couriers():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+
+    connection = get_db_connection()
+    if connection is None:
+        flash("Couldn't connect to the database!", "danger")
+        return render_template('index.html', couriers=[])
+
+    try:
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute('SELECT * FROM couriers')
+        couriers = cursor.fetchall()
+    except Error as e:
+        flash(f"Query failed: {e}", "danger")
+        couriers = []
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+
+    return render_template('couriers.html', couriers=couriers)
+
 if __name__ == '__main__':
     app.run(debug=True)
