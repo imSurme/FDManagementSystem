@@ -8,6 +8,10 @@
 </head>
 <body>
     <nav>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+            <h1>Food Delivery Management System</h1>
+        </div>
         <ul class="navbar">
             <li><a href="/">Home</a></li>
             <li><a href="/logout">Logout</a></li>
@@ -22,7 +26,6 @@
         </ul>
     {% endif %}
 {% endwith %}
-    <h1>Food Delivery Management System</h1>
     <div class="card-container">
         <div class="card">
             <a href="{{ url_for('users') }}">
