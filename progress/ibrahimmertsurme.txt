@@ -3,6 +3,7 @@ Progress of İbrahim Mert Sürme
 1. couriers.csv file added to the tables folder
 2. couriers table created, and data inserted into table
 3. app.py, index.html, login.html, and styles.css created
-4. couriers.html created
-5. added @app.route('/couriers') to app.py, and implemented couriers functions
-6. added card based navigation to pages of tables in index.html
+4. database connection, index page functions, login, and logout functions implemented
+5. couriers.html created
+6. @app.route('/couriers') to app.py added, and couriers functions implemented
+7. card based navigation to pages of tables in index.html added
