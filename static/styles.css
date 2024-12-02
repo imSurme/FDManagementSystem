@@ -20,20 +20,6 @@ body {
     text-align: center;
 }
 
-h1 {
-    color: #4CAF50;
-}
-
-label {
-    display: block;
-    width: 100%;
-    margin-top: 10px;
-    margin-bottom: 5px;
-    text-align: left;
-    color: #555;
-    font-weight: bold;
-}
-
 input {
     display: block;
     width: 100%;
@@ -65,19 +51,25 @@ button {
 
 nav {
     width: 100%;
-    background-color: #333;
-    padding: 10px 0;
+    background-color: #4CAF50;
     position: fixed;
     top: 0;
     left: 0;
     z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-.navbar {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    text-align: center;
+
+nav .logo {
+    display: flex;
+    align-items: center;
+}
+
+nav .logo img {
+    height: 40px;
+    margin-right: 10px;
 }
 
 .navbar li {
@@ -87,7 +79,7 @@ nav {
 
 .navbar a {
     text-decoration: none;
-    color: white;
+    color: #000000;
     font-size: 18px;
     font-weight: bold;
     padding: 10px 20px;
@@ -95,11 +87,11 @@ nav {
 }
 
 .navbar a:hover {
-    background-color: #4CAF50;
+    background-color: #e3e3e3;
     border-radius: 5px;
 }
 
-/* Flash messages */
+
 .flashes {
     list-style-type: none;
     padding: 0;
@@ -111,4 +103,55 @@ nav {
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 5px;
+}
+
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    background-color: #4CAF50;
+}
+
+.card a {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.container {
+    padding: 20px;
+    text-align: center;
+}
+
+.container h4 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.container p {
+    margin-top: 8px;
+    color: #555;
+}
+
+img {
+    width: 100px;        /* Adjust the width */
+    height: 100px;        /* Maintain aspect ratio */
+    max-width: 100%;     /* Ensure the image doesn't overflow */
+    object-fit: contain; /* Ensure the image doesn't get stretched */
+}
+
+.title {
+margin-top: 100px;
 }
