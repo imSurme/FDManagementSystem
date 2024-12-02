@@ -8,12 +8,11 @@
 </head>
 <body>
     <nav>
-        <div class="logo">
-            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
-            <h1>Food Delivery Management System</h1>
+        <div class="logo navbar">
+            <a href="/"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo"></a>
+            <h1><a href="/">Food Delivery Management System</a></h1>
         </div>
         <ul class="navbar">
-            <li><a href="/">Home</a></li>
             <li><a href="/logout">Logout</a></li>
         </ul>
     </nav>
