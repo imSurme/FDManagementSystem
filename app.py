@@ -86,5 +86,29 @@ def couriers():
 
     return render_template('couriers.html', couriers=couriers)
 
+@app.route('/restaurants')
+def restaurants():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+
+    connection = get_db_connection()
+    if connection is None:
+        flash("Couldn't connect to the database!", "danger")
+        return render_template('index.html', restaurants=[])
+
+    try:
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute('SELECT * FROM restaurants')
+        restaurants = cursor.fetchall()
+    except Error as e:
+        flash(f"Query failed: {e}", "danger")
+        restaurants = []
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+
+    return render_template('restaurants.html', restaurants=restaurants)
+
 if __name__ == '__main__':
     app.run(debug=True)
