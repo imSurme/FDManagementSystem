@@ -20,7 +20,16 @@ CREATE TABLE restaurants (
 );
 
 CREATE TABLE orders (
-
+    order_id INT AUTO_INCREMENT,
+    order_date DATE NOT NULL,
+    sales_qty FLOAT NOT NULL,
+    sales_amount FLOAT NOT NULL,
+    user_id INT NOT NULL,
+    restaurant_id INT NOT NULL,
+    order_status VARCHAR(20) NOT NULL,
+    PRIMARY KEY (order_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (restaurant_id) REFERENCES restaurants(restaurant_id)
 );
 
 CREATE TABLE food (
