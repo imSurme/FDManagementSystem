@@ -1,0 +1,5 @@
+Progress of Ahmet Can Şener
+
+1. orders.csv file added to the tables folder.
+2. orders table created.
+3. data inserted into 'orders' table.
