@@ -2,7 +2,18 @@ CREATE DATABASE food_delivery;
 USE food_delivery;
 
 CREATE TABLE users (
-
+    user_id INT,
+    name VARCHAR(30) NOT NULL,
+    email VARCHAR(50) NOT NULL,
+    password VARCHAR(20) NOT NULL,
+    age INT NOT NULL CHECK(age >= 12),
+    gender VARCHAR(15) NOT NULL,
+    marital_status VARCHAR(30) NOT NULL,
+    occupation VARCHAR(30) NOT NULL,
+    monthly_income VARCHAR(30) NOT NULL,
+    educational_qualifications VARCHAR(30) NOT NULL,
+    family_size INT NOT NULL CHECK(family_size >= 0),
+    PRIMARY KEY (user_id)
 );
 
 CREATE TABLE restaurants (
