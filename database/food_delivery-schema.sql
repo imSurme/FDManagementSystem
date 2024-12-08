@@ -2,7 +2,7 @@ CREATE DATABASE food_delivery;
 USE food_delivery;
 
 CREATE TABLE users (
-    user_id INT,
+    user_id INT AUTO_INCREMENT,
     name VARCHAR(30) NOT NULL,
     email VARCHAR(50) NOT NULL,
     password VARCHAR(20) NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE orders (
 
 CREATE TABLE food (
     food_id INT AUTO_INCREMENT,
-    item_name VARCHAR(100) NOT NULL,
+    item_name VARCHAR(255) NOT NULL,
     veg_or_non_veg ENUM('Veg', 'Non-veg') NOT NULL,
     PRIMARY KEY (food_id)
 );
@@ -67,6 +67,7 @@ CREATE TABLE menu (
     menu_id INT AUTO_INCREMENT,
     restaurant_id INT NOT NULL,
     food_id INT NOT NULL,
+    cuisine VARCHAR(50) NOT NULL,
     price DECIMAL(10, 2) NOT NULL CHECK(price >= 0),
     PRIMARY KEY (menu_id),
     FOREIGN KEY (restaurant_id) REFERENCES restaurants(restaurant_id),
