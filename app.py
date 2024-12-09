@@ -39,20 +39,21 @@ def login():
 
         try:
             cursor = connection.cursor(dictionary=True)
-            cursor.execute('SELECT * FROM users WHERE email = %s AND password = %s', (email, password))
-            user = cursor.fetchone()
+            cursor.execute('SELECT * FROM admins WHERE email = %s AND password = %s', (email, password))
+            admin = cursor.fetchone()
+
+            if admin and admin['email'] == email and admin['password'] == password:
+                session['logged_in'] = True
+                flash("Admin login successful!", "success")
+                return redirect(url_for('index'))
+            else:
+                flash('Invalid email or password', 'danger')
         except Error as e:
             flash(f"Query failed: {e}", "danger")
-
-        if user and user['email'] == email and user['password'] == password:
-            session['logged_in'] = True
-            flash("You have successfully logged in", "success")
-            return redirect(url_for('index'))
-        else:
-            flash('Invalid email or password', 'danger')
-
-        cursor.close()
-        connection.close()
+        finally:
+            if connection.is_connected():
+                cursor.close()
+                connection.close()
 
     return render_template('login.html')
 
