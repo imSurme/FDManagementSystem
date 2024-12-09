@@ -7,3 +7,4 @@ Progress of İbrahim Mert Sürme
 5. couriers.html created
 6. @app.route('/couriers') to app.py added, and couriers functions implemented
 7. card based navigation to pages of tables in index.html added
+8. admins table created
