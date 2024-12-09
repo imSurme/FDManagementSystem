@@ -31,21 +31,28 @@ input {
 }
 
 button {
-    padding: 15px;
+    padding: 10px;
     border-radius: 10px;
     margin-top: 15px;
     margin-bottom: 15px;
     border: none;
     color: white;
     cursor: pointer;
-    background-color: #455d7a;
-    width: 100%;
+    background-color: #007bff;
     font-size: 16px;
     transition: background-color 0.3s;
 }
 
 button:hover {
-    background-color: #f95959;
+    background-color: #0056b3;
+}
+
+.login-button {
+    background-color: #455d7a;
+}
+
+.login-button:hover {
+    background-color: #405166;
 }
 
 .wrap {
@@ -74,7 +81,7 @@ nav .logo {
 
 nav .logo img {
     height: 50px;
-    margin-right: 10px;
+    width: 50px;
 }
 
 .navbar li {
@@ -97,26 +104,44 @@ nav .logo img {
 }
 
 
-.flashes {
+.table-flashes {
     list-style-type: none;
-    padding: 0;
-    margin-top: 70px; /* To avoid navbar overlap */
-}
-
-.flash {
-    padding: 10px;
-    margin-bottom: 10px;
+    padding: 5px;
+    margin-top: 120px; /* To avoid navbar overlap */
+    margin-bottom: -60px;
+    background-color: #f95959;
     border-radius: 5px;
 }
+
+.index-flashes {
+    list-style-type: none;
+    padding: 5px;
+    margin-top: 70px; /* To avoid navbar overlap */
+    margin-bottom: -20px;
+    background-color: #f95959;
+    border-radius: 5px;
+}
+
+.login-flashes {
+    list-style-type: none;
+    padding: 5px;
+    margin-top: 70px; /* To avoid navbar overlap */
+    background-color: #f95959;
+    border-radius: 5px;
+}
+
 
 .card-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     column-gap: 50px;
     row-gap: 30px;
+    margin-top: 80px;
 }
 
 .card {
+    height: 175px;
+    width: 200px;
     border: 1px solid #ccc;
     border-radius: 8px;
     overflow: hidden;
@@ -142,23 +167,265 @@ nav .logo img {
 }
 
 .container h4 {
-    margin: 0;
+    margin-top: 5px;
     font-size: 1.2rem;
 }
 
-.container p {
-    margin-top: 8px;
-    color: #555;
-}
-
 img {
-    width: 100px;
-    height: 100px;
-    max-width: 100%;
-    object-fit: contain;
+    width: 100px;        /* Adjust the width */
+    height: 100px;        /* Maintain aspect ratio */
+    max-width: 100%;     /* Ensure the image doesn't overflow */
+    object-fit: contain; /* Ensure the image doesn't get stretched */
 }
 
-.title {
-margin-top: 100px;
+/* Courier List Container */
+.list {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
 }
 
+/* Courier Card */
+.table-card {
+    background-color: #f3f3f3;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    padding: 15px;
+    text-align: left;
+    position: relative;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+/* Hover Effect for Courier Card */
+.table-card:hover {
+    transform: scale(1.03);
+    background-color: #f95959;
+}
+
+/* Checkbox Styling */
+.table-card input[type="checkbox"] {
+    height: 15px;
+    width: 15px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+/* Card Content */
+.table-card p {
+    margin: 5px 0;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.search-bar {
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-top: 110px;
+}
+
+.hidden {
+    display: none;
+}
+
+.highlight {
+    background-color: yellow;
+}
+
+#next-match-button {
+    position: fixed;
+    bottom: 0;
+    right: 20px;
+    z-index: 1000;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#next-match-button:hover {
+    background-color: #0056b3;
+}
+
+.courier-form {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.login-button {
+    width: 100%;
+    padding: 15px;
+}
+
+.delete-button {
+    background-color: firebrick;
+}
+
+.delete-button:hover {
+    background-color: darkred;
+}
+
+.add-button {
+    background-color: green;
+}
+
+.add-button:hover {
+    background-color: darkgreen;
+}
+
+.update-button {
+    background-color: orange;
+}
+
+.update-button:hover {
+    background-color: darkorange;
+}
+
+.clear-button {
+    background-color: dimgray;
+}
+
+.clear-button:hover {
+    background-color: #505050;
+}
+
+.filter-button {
+    background-color: #6f42c1;
+}
+
+.filter-button:hover {
+    background-color: #5a32a1;
+}
+
+.sort-button {
+    background-color: sienna;
+}
+.sort-button:hover {
+    background-color: saddlebrown;
+}
+
+.add-button, .delete-button, .update-button, .filter-button, .sort-button, .search-button, .clear-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: -3px;
+}
+
+.filter-button {
+    margin-left: -802px;
+}
+
+.add-button {
+    margin-left: 15px;
+}
+
+.sort-container {
+    position: relative;
+}
+
+.sort-menu {
+    position: absolute;
+    top: 0;
+    left: calc(100% + 10px);
+    z-index: 1;
+    background-color: gray;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    display: none;
+    text-align: center;
+}
+
+.sort-menu h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+}
+
+.sort-menu button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+.sort-menu button:hover {
+    background-color: #0056b3;
+}
+
+#sort-by {
+    width: 100%;
+}
+
+#scrollTopBtn {
+    position: fixed;
+    bottom: 50px;
+    right: 25px;
+    z-index: 1000;
+    background: none;
+    border: none;
+    padding: 0;
+    border-radius: 100%;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 45px;
+    height: 45px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    margin-right: 25px;
+}
+
+#scrollTopBtn.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.up-arrow {
+    height: 45px;
+    border-radius: 100%;
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+#second-h3 {
+    margin-top: 10px;
+}
+
+.button-img {
+    height: 20px;
+    width: 20px;
+}
+
+#role {
+    margin-bottom: 15px;
+}
+
+#courier-gender {
+    width: 100%;
+    height: 40px;
+    border-radius: 5px;
+}
