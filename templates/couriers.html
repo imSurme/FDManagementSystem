@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Couriers List</title>
+    <title>Couriers</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
@@ -16,22 +16,231 @@
             <li><a href="/logout">Logout</a></li>
         </ul>
     </nav>
-{% with messages = get_flashed_messages(with_categories=True) %}
-    {% if messages %}
-        <ul class="flashes">
-            {% for category, message in messages %}
-                <li class="flash {{ category }}">{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-{% endwith %}
-    <h1 class="courier title">Courier Data</h1>
-    <div class="list">
-        <ul>
-        {% for courier in couriers %}
-            <li>{{ courier['name'] }} - {{ courier['gender'] }} - {{ courier['birth_date'] }} - {{ courier['restaurant_id'] }}</li>
-        {% endfor %}
-        </ul>
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            <ul class="table-flashes">
+                {% for category, message in messages %}
+                    <li class="flash {{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    <button id="scrollTopBtn"><img class="up-arrow" src="{{ url_for('static', filename='images/up-arrow.png') }}"></button>
+    <div class="search-bar">
+        <form id="courier-form" class="courier-form" method="post">
+            <input type="number" id="courier-id" name="courier_id" placeholder="Courier ID">
+            <input type="text" id="courier-name" name="name" placeholder="Name">
+            <select id="courier-gender" name="gender">
+                <option value="" hidden>Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+            <input type="date" id="courier-birthdate" name="birth_date" placeholder="Birth Date">
+            <input type="number" id="courier-restaurant-id" name="restaurant_id" placeholder="Restaurant ID">
+            <input type="hidden" id="selected-couriers" name="selected_couriers">
+            <input type="hidden" id="update-courier-id" name="update_courier_id">
+            <input type="hidden" id="clear-filter" name="clear_filter" value="false">
+        </form>
+        <button class="search-button" onclick="searchCourier()"><img class="button-img" src="{{ url_for('static', filename='images/search.png') }}" alt="search icon"></img>Search</button>
+        <button class="clear-button" onclick="clearSearch()"><img class="button-img" src="{{ url_for('static', filename='images/clear.png') }}" alt="clear icon"></img>Clear</button>
     </div>
+    <div id="navigation" class="hidden">
+        <button id="next-match-button" onclick="goToNextMatch()">Next Match</button>
+    </div>
+    <div class="list" id="courier-list">
+        {% for courier in couriers %}
+        <div class="table-card" id="courier-card-{{ courier['courier_id'] }}">
+            <input type="checkbox" id="courier-{{ loop.index }}" name="selected_couriers" value="{{ courier['courier_id'] }}">
+            <label for="courier-{{ loop.index }}">
+                <p><strong>ID:</strong> <span class="courier-id">{{ courier['courier_id'] }}</span></p>
+                <p><strong>Name:</strong> <span class="courier-name">{{ courier['name'] }}</span></p>
+                <p><strong>Gender:</strong> <span class="courier-gender">{{ courier['gender'] }}</span></p>
+                <p><strong>Birth Date:</strong> <span class="courier-birthdate">{{ courier['birth_date'] }}</span></p>
+                <p><strong>Restaurant ID:</strong> <span class="courier-restaurant-id">{{ courier['restaurant_id'] }}</span></p>
+            </label>
+        </div>
+        {% endfor %}
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const courierCards = document.querySelectorAll('.table-card');
+
+            let lastCheckedBox = null;
+
+            function updateInputs(checkbox) {
+                const card = checkbox.closest('.table-card');
+                const id = card.querySelector('.courier-id').textContent.trim();
+                const name = card.querySelector('.courier-name').textContent.trim();
+                const gender = card.querySelector('.courier-gender').textContent.trim();
+                const birthDate = card.querySelector('.courier-birthdate').textContent.trim();
+                const restaurantId = card.querySelector('.courier-restaurant-id').textContent.trim();
+
+                document.getElementById('courier-id').value = id;
+                document.getElementById('courier-name').value = name;
+                document.getElementById('courier-gender').value = gender;
+                document.getElementById('courier-birthdate').value = birthDate;
+                document.getElementById('courier-restaurant-id').value = restaurantId;
+                document.getElementById('update-courier-id').value = id;
+            }
+
+            function clearInputs() {
+                document.getElementById('courier-id').value = '';
+                document.getElementById('courier-name').value = '';
+                document.getElementById('courier-gender').value = '';
+                document.getElementById('courier-birthdate').value = '';
+                document.getElementById('courier-restaurant-id').value = '';
+                document.getElementById('update-courier-id').value = '';
+            }
+
+            function handleCheckboxChange(event) {
+                const checkbox = event.target;
+                if (checkbox.checked) {
+                    lastCheckedBox = checkbox;
+                    updateInputs(checkbox);
+                } else if (lastCheckedBox === checkbox) {
+                    lastCheckedBox = null;
+                    const selectedCheckboxes = Array.from(document.querySelectorAll('#courier-list input[type="checkbox"]:checked'));
+                    if (selectedCheckboxes.length > 0) {
+                        lastCheckedBox = selectedCheckboxes[selectedCheckboxes.length - 1];
+                        updateInputs(lastCheckedBox);
+                    } else {
+                        clearInputs();
+                    }
+                }
+            }
+
+            courierCards.forEach(card => {
+                const checkbox = card.querySelector('input[type="checkbox"]');
+                checkbox.addEventListener('change', handleCheckboxChange);
+            });
+        });
+
+        let matchedCards = [];
+        let currentMatchIndex = 0;
+
+        function searchCourier() {
+            const idInput = document.getElementById('courier-id').value.trim().toLowerCase();
+            const nameInput = document.getElementById('courier-name').value.trim().toLowerCase();
+            const genderInput = document.getElementById('courier-gender').value.trim().toLowerCase();
+            const birthdateInput = document.getElementById('courier-birthdate').value.trim().toLowerCase();
+            const restaurantIdInput = document.getElementById('courier-restaurant-id').value.trim().toLowerCase();
+            const cards = document.querySelectorAll('.table-card');
+            matchedCards = [];
+            currentMatchIndex = -1;
+
+            if (!idInput && !nameInput && !genderInput && !birthdateInput && !restaurantIdInput) {
+                alert("Please enter at least one search criterion.");
+                return;
+            }
+
+            cards.forEach(card => card.classList.remove('highlight'));
+
+            cards.forEach(card => {
+                const id = card.querySelector('.courier-id').textContent.toLowerCase();
+                const name = card.querySelector('.courier-name').textContent.toLowerCase();
+                const gender = card.querySelector('.courier-gender').textContent.toLowerCase();
+                const birthdate = card.querySelector('.courier-birthdate').textContent.toLowerCase();
+                const restaurantId = card.querySelector('.courier-restaurant-id').textContent.toLowerCase();
+
+                if (
+                    (!idInput || id === idInput) &&
+                    (!nameInput || name.includes(nameInput)) &&
+                    (!genderInput || gender === genderInput) &&
+                    (!birthdateInput || birthdate === birthdateInput) &&
+                    (!restaurantIdInput || restaurantId === restaurantIdInput)
+                ) {
+                    matchedCards.push(card);
+                }
+            });
+
+            if (matchedCards.length > 0) {
+                if (matchedCards.length === 1) {
+                    document.getElementById('navigation').classList.add('hidden');
+                } else {
+                    document.getElementById('navigation').classList.remove('hidden');
+                }
+                goToNextMatch();
+            } else {
+                document.getElementById('navigation').classList.add('hidden');
+                alert("No courier found matching all the criteria exactly.");
+            }
+        }
+
+        function goToNextMatch() {
+            if (currentMatchIndex >= 0 && currentMatchIndex < matchedCards.length) {
+                matchedCards[currentMatchIndex].classList.remove('highlight');
+            }
+
+            currentMatchIndex = (currentMatchIndex + 1) % matchedCards.length;
+            const nextCard = matchedCards[currentMatchIndex];
+
+            nextCard.classList.add('highlight');
+            nextCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function clearSearch() {
+            document.getElementById('courier-id').value = "";
+            document.getElementById('courier-name').value = "";
+            document.getElementById('courier-gender').value = "";
+            document.getElementById('courier-birthdate').value = "";
+            document.getElementById('courier-restaurant-id').value = "";
+
+            document.getElementById('clear-filter').value = "true";
+            document.getElementById('courier-form').submit();
+
+            document.querySelectorAll('.table-card').forEach(card => card.classList.remove('highlight'));
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
+
+            matchedCards = [];
+            currentMatchIndex = 0;
+
+            document.getElementById('navigation').classList.add('hidden');
+        }
+
+        function collectSelected() {
+            const selectedCouriers = [];
+            const checkboxes = document.querySelectorAll('#courier-list input[type="checkbox"]:checked');
+
+            checkboxes.forEach(checkbox => {
+                selectedCouriers.push(checkbox.value);
+            });
+
+            document.getElementById('selected-couriers').value = selectedCouriers.join(',');
+        }
+
+        const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+        function checkScrollPosition() {
+            if (window.scrollY > 100) {
+                scrollTopBtn.classList.add("visible");
+            } else {
+                scrollTopBtn.classList.remove("visible");
+            }
+        }
+
+        window.addEventListener("load", checkScrollPosition);
+
+        window.addEventListener("scroll", checkScrollPosition);
+
+        scrollTopBtn.addEventListener("click", function() {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        });
+
+        function toggleSortMenu(event) {
+            const sortMenu = document.getElementById('sort-menu');
+            const isHidden = sortMenu.style.display === 'none' || !sortMenu.style.display;
+
+            sortMenu.style.display = isHidden ? 'block' : 'none';
+
+            if (isHidden) {
+                const buttonRect = event.target.getBoundingClientRect();
+                sortMenu.style.top = `${buttonRect.top + window.scrollY}px`;
+                sortMenu.style.left = `${buttonRect.right + 10}px`;
+            }
+        }
+    </script>
 </body>
 </html>
