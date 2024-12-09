@@ -107,7 +107,7 @@ nav .logo img {
 .table-flashes {
     list-style-type: none;
     padding: 5px;
-    margin-top: 120px; /* To avoid navbar overlap */
+    margin-top: 120px;
     margin-bottom: -60px;
     background-color: #f95959;
     border-radius: 5px;
@@ -116,7 +116,7 @@ nav .logo img {
 .index-flashes {
     list-style-type: none;
     padding: 5px;
-    margin-top: 70px; /* To avoid navbar overlap */
+    margin-top: 70px;
     margin-bottom: -20px;
     background-color: #f95959;
     border-radius: 5px;
@@ -125,7 +125,7 @@ nav .logo img {
 .login-flashes {
     list-style-type: none;
     padding: 5px;
-    margin-top: 70px; /* To avoid navbar overlap */
+    margin-top: 70px;
     background-color: #f95959;
     border-radius: 5px;
 }
@@ -172,13 +172,12 @@ nav .logo img {
 }
 
 img {
-    width: 100px;        /* Adjust the width */
-    height: 100px;        /* Maintain aspect ratio */
-    max-width: 100%;     /* Ensure the image doesn't overflow */
-    object-fit: contain; /* Ensure the image doesn't get stretched */
+    width: 100px;
+    height: 100px;
+    max-width: 100%;
+    object-fit: contain;
 }
 
-/* Courier List Container */
 .list {
     margin-top: 20px;
     margin-bottom: 20px;
@@ -188,7 +187,6 @@ img {
     gap: 20px;
 }
 
-/* Courier Card */
 .table-card {
     background-color: #f3f3f3;
     border: 1px solid #ccc;
@@ -201,13 +199,11 @@ img {
     transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
-/* Hover Effect for Courier Card */
 .table-card:hover {
     transform: scale(1.03);
     background-color: #f95959;
 }
 
-/* Checkbox Styling */
 .table-card input[type="checkbox"] {
     height: 15px;
     width: 15px;
@@ -218,7 +214,6 @@ img {
     cursor: pointer;
 }
 
-/* Card Content */
 .table-card p {
     margin: 5px 0;
     font-size: 14px;
@@ -321,7 +316,7 @@ img {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    margin-top: -3px;
+    margin-top: 0;
 }
 
 .filter-button {
