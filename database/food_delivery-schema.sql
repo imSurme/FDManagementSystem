@@ -60,7 +60,7 @@ CREATE TABLE food (
 CREATE TABLE couriers (
     courier_id INT AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
-    gender VARCHAR(50) NOT NULL,
+    gender ENUM('Male', 'Female') NOT NULL,
     birth_date DATE NOT NULL,
     restaurant_id INT,
     PRIMARY KEY (courier_id),
