@@ -6,5 +6,9 @@ Progress of İbrahim Mert Sürme
 4. database connection, index page functions, login, and logout functions implemented
 5. couriers.html created
 6. @app.route('/couriers') to app.py added, and couriers functions implemented
-7. card based navigation to pages of tables in index.html added
+7. card based navigation to pages of tables added to index.html
 8. admins table created
+9. admin login function in app.py created
+10. selectable cards with courier data added to couriers.html
+11. search bar and search - clear buttons and their functions (js) created in couriers.html
+12. next match - scroll top buttons and their functions (js) created in couriers.html
