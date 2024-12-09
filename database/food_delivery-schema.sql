@@ -1,6 +1,13 @@
 CREATE DATABASE food_delivery;
 USE food_delivery;
 
+CREATE TABLE admins (
+    admin_id INT AUTO_INCREMENT,
+    email VARCHAR(150) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    PRIMARY KEY (admin_id)
+);
+
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT,
     name VARCHAR(30) NOT NULL,
