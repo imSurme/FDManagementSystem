@@ -7,18 +7,28 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-{% with messages = get_flashed_messages(with_categories=True) %}
-    {% if messages %}
-        <ul class="flashes">
-            {% for category, message in messages %}
-                <li class="flash {{ category }}">{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-{% endwith %}
+    <div class="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                <div class="flash-message {{ category }}">
+                    {{ message }}
+                    <button class="close-flash" onclick="this.parentElement.style.display='none';">&times;</button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+    </div>
     <div class="login">
         <h1>Login</h1>
         <form method="post" action="{{ url_for('login') }}">
+            <label class="role-label" for="role">As:</label>
+            <select name="role" id="role" required>
+                <option value="admin">Admin</option>
+                <option value="user">Restaurant Owner</option>
+            </select>
             <input type="email" name="email" placeholder="Email" required>
             <input type="password" name="password" placeholder="Password" required>
             <div class="wrap">
@@ -26,5 +36,15 @@
             </div>
         </form>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const flashMessages = document.querySelectorAll(".flash-message");
+            flashMessages.forEach((msg) => {
+                setTimeout(() => {
+                    msg.style.display = "none";
+                }, 5000);
+            });
+        });
+    </script>
 </body>
 </html>
