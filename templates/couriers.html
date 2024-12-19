@@ -44,6 +44,11 @@
         <button class="search-button" onclick="searchCourier()"><img class="button-img" src="{{ url_for('static', filename='images/search.png') }}" alt="search icon"></img>Search</button>
         <button class="clear-button" onclick="clearSearch()"><img class="button-img" src="{{ url_for('static', filename='images/clear.png') }}" alt="clear icon"></img>Clear</button>
     </div>
+    <div class="action-buttons">
+        <button class="add-button" type="submit" name="action" value="add" form="courier-form"><img class="button-img" src="{{ url_for('static', filename='images/add.png') }}" alt="add icon"></img>Add</button>
+        <button class="delete-button" type="submit" name="action" value="delete" form="courier-form" onclick="collectSelected()"><img class="button-img" src="{{ url_for('static', filename='images/delete.png') }}" alt="delete icon"></img>Delete</button>
+        <button class="update-button" type="submit" name="action" value="update" form="courier-form"><img class="button-img" src="{{ url_for('static', filename='images/update.png') }}" alt="update icon"></img>Update</button>
+    </div>
     <div id="navigation" class="hidden">
         <button id="next-match-button" onclick="goToNextMatch()">Next Match</button>
     </div>
@@ -228,19 +233,6 @@
                 behavior: "smooth"
             });
         });
-
-        function toggleSortMenu(event) {
-            const sortMenu = document.getElementById('sort-menu');
-            const isHidden = sortMenu.style.display === 'none' || !sortMenu.style.display;
-
-            sortMenu.style.display = isHidden ? 'block' : 'none';
-
-            if (isHidden) {
-                const buttonRect = event.target.getBoundingClientRect();
-                sortMenu.style.top = `${buttonRect.top + window.scrollY}px`;
-                sortMenu.style.left = `${buttonRect.right + 10}px`;
-            }
-        }
     </script>
 </body>
 </html>
