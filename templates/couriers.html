@@ -16,15 +16,20 @@
             <li><a href="/logout">Logout</a></li>
         </ul>
     </nav>
-    {% with messages = get_flashed_messages(with_categories=True) %}
-        {% if messages %}
-            <ul class="table-flashes">
-                {% for category, message in messages %}
-                    <li class="flash {{ category }}">{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
+    <div class="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">
+                        {{ message }}
+                        <button class="close-flash" onclick="this.parentElement.style.display='none';">&times;</button>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
     <button id="scrollTopBtn"><img class="up-arrow" src="{{ url_for('static', filename='images/up-arrow.png') }}"></button>
     <div class="search-bar">
         <form id="courier-form" class="courier-form" method="post">
@@ -231,6 +236,15 @@
             window.scrollTo({
                 top: 0,
                 behavior: "smooth"
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const flashMessages = document.querySelectorAll(".flash-message");
+            flashMessages.forEach((msg) => {
+                setTimeout(() => {
+                    msg.style.display = "none";
+                }, 5000);
             });
         });
     </script>
