@@ -103,31 +103,62 @@ nav .logo img {
     border-radius: 5px;
 }
 
-
-.table-flashes {
-    list-style-type: none;
-    padding: 5px;
-    margin-top: 120px;
-    margin-bottom: -60px;
-    background-color: #f95959;
-    border-radius: 5px;
+.flash-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 10px;
+    z-index: 999;
+    width: 300px;
+    max-width: 100%;
 }
 
-.index-flashes {
-    list-style-type: none;
-    padding: 5px;
-    margin-top: 70px;
-    margin-bottom: -20px;
-    background-color: #f95959;
+.flash-message {
+    padding: 15px;
     border-radius: 5px;
+    font-size: 14px;
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    position: relative;
+    animation: slideIn 0.5s ease-out;
 }
 
-.login-flashes {
-    list-style-type: none;
-    padding: 5px;
-    margin-top: 70px;
-    background-color: #f95959;
-    border-radius: 5px;
+.flash-message.success {
+    background-color: #4caf50;
+}
+
+.flash-message.danger {
+    background-color: #f44336;
+}
+
+.flash-message.warning {
+    background-color: #ff9800;
+}
+
+.flash-message.info {
+    background-color: #2196f3;
+}
+
+.flash-message .close-flash {
+    position: absolute;
+    top: -25px;
+    right: -7px;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 
@@ -172,12 +203,13 @@ nav .logo img {
 }
 
 img {
-    width: 100px;
-    height: 100px;
-    max-width: 100%;
-    object-fit: contain;
+    width: 100px;        /* Adjust the width */
+    height: 100px;        /* Maintain aspect ratio */
+    max-width: 100%;     /* Ensure the image doesn't overflow */
+    object-fit: contain; /* Ensure the image doesn't get stretched */
 }
 
+/* Courier List Container */
 .list {
     margin-top: 20px;
     margin-bottom: 20px;
@@ -187,6 +219,7 @@ img {
     gap: 20px;
 }
 
+/* Courier Card */
 .table-card {
     background-color: #f3f3f3;
     border: 1px solid #ccc;
@@ -199,11 +232,13 @@ img {
     transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
+/* Hover Effect for Courier Card */
 .table-card:hover {
     transform: scale(1.03);
     background-color: #f95959;
 }
 
+/* Checkbox Styling */
 .table-card input[type="checkbox"] {
     height: 15px;
     width: 15px;
@@ -214,6 +249,7 @@ img {
     cursor: pointer;
 }
 
+/* Card Content */
 .table-card p {
     margin: 5px 0;
     font-size: 14px;
@@ -320,11 +356,11 @@ img {
 }
 
 .filter-button {
-    margin-left: -802px;
+    margin-left: -821px;
 }
 
 .add-button {
-    margin-left: 15px;
+    margin-left: 25px;
 }
 
 .sort-container {
@@ -335,8 +371,8 @@ img {
     position: absolute;
     top: 0;
     left: calc(100% + 10px);
-    z-index: 1;
-    background-color: gray;
+    z-index: 999;
+    background-color: dimgray;
     border: 1px solid #ccc;
     border-radius: 5px;
     padding: 10px;
@@ -417,10 +453,26 @@ img {
 
 #role {
     margin-bottom: 15px;
+    padding: 3px;
+    border-radius: 5px;
 }
 
 #courier-gender {
     width: 100%;
     height: 40px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
     border-radius: 5px;
+}
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+    display: none;
 }
