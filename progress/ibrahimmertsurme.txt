@@ -12,3 +12,5 @@ Progress of İbrahim Mert Sürme
 10. selectable cards with courier data added to couriers.html
 11. search bar and search - clear buttons and their functions (js) created in couriers.html
 12. next match - scroll top buttons and their functions (js) created in couriers.html
+13. add - delete - update - clear buttons and their courier functions (py-sql) implemented in app.py
+14. admin or restaurant owner login types implemented in app.py
