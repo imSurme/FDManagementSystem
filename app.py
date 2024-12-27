@@ -1,9 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import mysql.connector
 from mysql.connector import Error
+from flask_session import Session
 
 app = Flask(__name__)
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_PERMANENT'] = False
 app.secret_key = 'a_secret_key'
+Session(app)
 
 def get_db_connection():
     try:
@@ -57,8 +61,8 @@ def login():
                 user = cursor.fetchone()
 
                 if user and user['email'] == email and user['password'] == password:
-                    user_id = user['user_id']
-                    cursor.execute('SELECT * FROM restaurants WHERE user_id = %s', (user_id,))
+                    session['user_id'] = user['user_id']
+                    cursor.execute('SELECT * FROM restaurants WHERE user_id = %s', (session['user_id'],))
                     restaurant = cursor.fetchone()
 
                     if restaurant:
@@ -86,9 +90,9 @@ def logout():
     flash('You have been logged out', 'success')
     return redirect(url_for('login'))
 
-@app.route('/couriers')
+@app.route('/couriers', methods=['GET', 'POST'])
 def couriers():
-    if 'logged_in' not in session:
+    if not session.get('logged_in'):
         return redirect(url_for('login'))
 
     role = session.get('role')
@@ -97,7 +101,7 @@ def couriers():
     connection = get_db_connection()
     if connection is None:
         flash("Couldn't connect to the database!", "danger")
-        return render_template('index.html', couriers=[])
+        return render_template('couriers.html', couriers=[])
 
     try:
         cursor = connection.cursor(dictionary=True)
@@ -144,12 +148,19 @@ def courier_action():
             birth_date = request.form.get('birth_date')
             restaurant_id = request.form.get('restaurant_id')
 
+            if role == 'user' and restaurant_id != str(restaurant_id_session):
+                flash("Unauthorized action! You can only add courier(s) for your restaurant.", "danger")
+                return redirect(url_for('couriers'))
+
             if not name or not gender or not birth_date or not restaurant_id:
                 flash("All fields are required (except Courier ID).", "warning")
                 return redirect(url_for('couriers'))
 
-            if role == 'user' and restaurant_id != str(restaurant_id_session):
-                flash("Unauthorized action! You can only manage couriers for your restaurant.", "danger")
+            cursor.execute("SELECT COUNT(*) FROM restaurants WHERE restaurant_id = %s", (restaurant_id,))
+            result = cursor.fetchone() #################################################
+
+            if result['COUNT(*)'] == 0:
+                flash('No restaurant found with that Restaurant ID!', 'danger')
                 return redirect(url_for('couriers'))
 
             if courier_id:
@@ -203,8 +214,16 @@ def courier_action():
                 flash("No courier selected for update.", "warning")
                 return redirect(url_for('couriers'))
 
-            if role == 'user' and restaurant_id != str(restaurant_id_session):
-                flash("Unauthorized action! You can only manage couriers for your restaurant.", "danger")
+            if role == 'user' and (restaurant_id != str(restaurant_id_session) or new_courier_id != update_courier_id):
+                flash("Unauthorized action! You cannot change your Courier's ID or Restaurant ID.", "danger")
+                return redirect(url_for('couriers'))
+
+            cursor.execute("SELECT COUNT(*) FROM restaurants WHERE restaurant_id = %s", (restaurant_id,))
+            result = cursor.fetchone()
+
+            if result['COUNT(*)'] == 0:
+                # If the Restaurant ID is not found, flash an error message
+                flash('No restaurant found with that Restaurant ID!', 'danger')
                 return redirect(url_for('couriers'))
 
             if new_courier_id != update_courier_id:
@@ -219,10 +238,79 @@ def courier_action():
                     flash(f"The new Courier ID is already in use. Please provide a unique ID. Suggestions: {suggestions}","warning")
                     return redirect(url_for('couriers'))
 
-            query = "UPDATE couriers SET name = %s, gender = %s, birth_date = %s, restaurant_id = %s WHERE courier_id = %s"
-            cursor.execute(query, (name, gender, birth_date, restaurant_id, update_courier_id))
+            query = "UPDATE couriers SET courier_id = %s, name = %s, gender = %s, birth_date = %s, restaurant_id = %s WHERE courier_id = %s"
+            cursor.execute(query, (new_courier_id, name, gender, birth_date, restaurant_id, update_courier_id))
             connection.commit()
             flash("Courier updated successfully!", "success")
+
+        elif action == 'filter':
+            courier_id = request.form.get('courier_id')
+            name = request.form.get('name')
+            gender = request.form.get('gender')
+            birth_date = request.form.get('birth_date')
+            restaurant_id = request.form.get('restaurant_id')
+
+            if not any([courier_id, name, gender, birth_date, restaurant_id]):
+                flash("Please provide at least one filter criteria.", "warning")
+                return redirect(url_for('couriers'))
+
+            query = "SELECT * FROM couriers WHERE 1=1"
+            params = []
+            if role == 'user':
+                query += " AND restaurant_id = %s"
+                params.append(restaurant_id_session)
+
+            if courier_id:
+                query += " AND courier_id = %s"
+                params.append(courier_id)
+            if name:
+                query += " AND name LIKE %s"
+                params.append(f"%{name}%")
+            if gender:
+                query += " AND gender = %s"
+                params.append(gender)
+            if birth_date:
+                query += " AND birth_date = %s"
+                params.append(birth_date)
+            if restaurant_id:
+                query += " AND restaurant_id = %s"
+                params.append(restaurant_id)
+
+            cursor.execute(query, params)
+            couriers = cursor.fetchall()
+            session['filtered_couriers'] = couriers
+            flash(f"Found {len(couriers)} courier(s) matching the criteria(s).", "success")
+            return render_template('couriers.html', couriers=couriers)
+
+        elif action == 'sort':
+            sort_by = request.form.get('sort_by')
+            sort_order = request.form.get('sort_order')
+
+            if not sort_by or sort_order not in ['ASC', 'DESC']:
+                flash("Invalid sort parameters.", "danger")
+                return redirect(url_for('couriers'))
+
+            if 'filtered_couriers' in session and session['filtered_couriers']:
+                filtered_ids = [courier['courier_id'] for courier in session['filtered_couriers']]
+
+                query = f"SELECT * FROM couriers WHERE courier_id IN ({','.join(['%s'] * len(filtered_ids))}) ORDER BY {sort_by} {sort_order}"
+                cursor.execute(query, filtered_ids)
+                couriers = cursor.fetchall()
+
+                flash("Filtered couriers sorted successfully!", "success")
+            else:
+                query = "SELECT * FROM couriers WHERE 1=1"
+                params = []
+                if role == 'user':
+                    query += " AND restaurant_id = %s"
+                    params.append(restaurant_id_session)
+
+                query += f" ORDER BY {sort_by} {sort_order}"
+                cursor.execute(query, params)
+                couriers = cursor.fetchall()
+                flash("Couriers sorted successfully!", "success")
+
+            return render_template('couriers.html', couriers=couriers)
 
         elif action == 'clear':
             if 'filtered_couriers' in session:
