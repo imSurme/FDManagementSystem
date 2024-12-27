@@ -1,0 +1,485 @@
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: sans-serif;
+    min-height: 100vh;
+    background: #a7bcb9;
+    flex-direction: column;
+    margin: 0;
+}
+
+.login {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    padding: 10px 20px;
+    transition: transform 0.2s;
+    width: 500px;
+    text-align: center;
+}
+
+input {
+    display: block;
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+button {
+    padding: 10px;
+    border-radius: 10px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    background-color: #007bff;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.login-button {
+    background-color: #455d7a;
+}
+
+.login-button:hover {
+    background-color: #405166;
+}
+
+.wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+nav {
+    width: 100%;
+    background-color: #455d7a;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+nav .logo {
+    display: flex;
+    align-items: center;
+}
+
+nav .logo img {
+    height: 50px;
+    width: 50px;
+}
+
+.navbar li {
+    display: inline-block;
+    margin: 0 20px;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px 20px;
+    transition: background-color 0.3s;
+}
+
+.navbar a:hover {
+    background-color: #f95959;
+    border-radius: 5px;
+}
+
+.flash-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 10px;
+    z-index: 999;
+    width: 300px;
+    max-width: 100%;
+}
+
+.flash-message {
+    padding: 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    position: relative;
+    animation: slideIn 0.5s ease-out;
+}
+
+.flash-message.success {
+    background-color: #4caf50;
+}
+
+.flash-message.danger {
+    background-color: #f44336;
+}
+
+.flash-message.warning {
+    background-color: #ff9800;
+}
+
+.flash-message.info {
+    background-color: #2196f3;
+}
+
+.flash-message .close-flash {
+    position: absolute;
+    top: -26px;
+    right: -7px;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 50px;
+    row-gap: 30px;
+    margin-top: 80px;
+}
+
+.card {
+    height: 175px;
+    width: 200px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    background: #e3e3e3;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    background-color: #f95959;
+}
+
+.card a {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.container {
+    padding: 20px;
+    text-align: center;
+}
+
+.container h4 {
+    margin-top: 5px;
+    font-size: 1.2rem;
+}
+
+img {
+    width: 100px;        /* Adjust the width */
+    height: 100px;        /* Maintain aspect ratio */
+    max-width: 100%;     /* Ensure the image doesn't overflow */
+    object-fit: contain; /* Ensure the image doesn't get stretched */
+}
+
+.list {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.table-card {
+    background-color: #f3f3f3;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    padding: 15px;
+    text-align: left;
+    position: relative;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.table-card:hover {
+    transform: scale(1.03);
+    background-color: #f95959;
+}
+
+.table-card input[type="checkbox"] {
+    height: 15px;
+    width: 15px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.table-card p {
+    margin: 5px 0;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.search-bar {
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-top: 110px;
+}
+
+.hidden {
+    display: none;
+}
+
+.highlight {
+    background-color: yellow;
+}
+
+#next-match-button {
+    position: fixed;
+    bottom: 0;
+    right: 20px;
+    z-index: 1000;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#next-match-button:hover {
+    background-color: #0056b3;
+}
+
+.courier-form, .user-form, .menu-form {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.restaurant-form {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.restaurant-form input {
+    display: block;
+    width: 120px;
+    margin-bottom: 15px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.login-button {
+    width: 100%;
+    padding: 15px;
+}
+
+.delete-button {
+    background-color: firebrick;
+}
+
+.delete-button:hover {
+    background-color: darkred;
+}
+
+.add-button {
+    background-color: green;
+}
+
+.add-button:hover {
+    background-color: darkgreen;
+}
+
+.update-button {
+    background-color: orange;
+}
+
+.update-button:hover {
+    background-color: darkorange;
+}
+
+.clear-button {
+    background-color: dimgray;
+}
+
+.clear-button:hover {
+    background-color: #505050;
+}
+
+.filter-button {
+    background-color: #6f42c1;
+}
+
+.filter-button:hover {
+    background-color: #5a32a1;
+}
+
+.sort-button {
+    background-color: sienna;
+}
+.sort-button:hover {
+    background-color: saddlebrown;
+}
+
+.add-button, .delete-button, .update-button, .filter-button, .sort-button, .search-button, .clear-button {
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 5px;
+    margin-top: 0;
+}
+
+.sort-container {
+    position: relative;
+}
+
+.sort-menu {
+    position: absolute;
+    top: 0;
+    left: calc(100% + 10px);
+    z-index: 999;
+    background-color: dimgray;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    display: none;
+    text-align: center;
+}
+
+.sort-menu h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+}
+
+.sort-menu button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+.sort-menu button:hover {
+    background-color: #0056b3;
+}
+
+#sort-by {
+    width: 100%;
+}
+
+#scrollTopBtn {
+    position: fixed;
+    bottom: 50px;
+    right: 25px;
+    z-index: 1000;
+    background: none;
+    border: none;
+    padding: 0;
+    border-radius: 100%;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 45px;
+    height: 45px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    margin-right: 25px;
+}
+
+#scrollTopBtn.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.up-arrow {
+    height: 45px;
+    border-radius: 100%;
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+#second-h3 {
+    margin-top: 10px;
+}
+
+.button-img {
+    height: 20px;
+    width: 20px;
+}
+
+#role {
+    margin-bottom: 15px;
+    padding: 3px;
+    border-radius: 5px;
+}
+
+#courier-gender, #user-gender, #restaurant-rating-count {
+    width: 100%;
+    height: 38px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#restaurant-rating-count {
+   width: 120px;
+   padding: 5px;
+}
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+    display: none;
+}
