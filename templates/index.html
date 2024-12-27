@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome Page</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     <nav>
@@ -35,7 +35,7 @@
             <a href="{{ url_for('users') }}">
                 <div class="container">
                     <img src="{{ url_for('static', filename='images/user.png') }}" alt="user icon">
-                    <h4>Users</h4>
+                    <h4>{{ 'Profile' if session['role'] == 'user' else 'Users' }}</h4>
                 </div>
             </a>
         </div>
@@ -43,20 +43,20 @@
             <a href="{{ url_for('restaurants') }}">
                 <div class="container">
                     <img src="{{ url_for('static', filename='images/restaurant.png') }}" alt="restaurant icon">
-                    <h4>Restaurants</h4>
+                    <h4>{{ 'Restaurant' if session['role'] == 'user' else 'Restaurants' }}</h4>
                 </div>
             </a>
         </div>
         <div class="card">
-            <a href="">
+            <a href="{{ url_for('menus') }}">
                 <div class="container">
                     <img src="{{ url_for('static', filename='images/menu.png') }}" alt="menu icon">
-                    <h4>Menus</h4>
+                    <h4>{{ 'Menu' if session['role'] == 'user' else 'Menus' }}</h4>
                 </div>
             </a>
         </div>
         <div class="card">
-            <a href="">
+            <a href="{{ url_for('foods') }}">
                 <div class="container">
                     <img src="{{ url_for('static', filename='images/food.png') }}" alt="food icon">
                     <h4>Foods</h4>
@@ -64,7 +64,7 @@
             </a>
         </div>
         <div class="card">
-            <a href="">
+            <a href="{{ url_for('orders') }}">
                 <div class="container">
                     <img src="{{ url_for('static', filename='images/order.png') }}" alt="order icon">
                     <h4>Orders</h4>
@@ -80,15 +80,6 @@
             </a>
         </div>
     </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const flashMessages = document.querySelectorAll(".flash-message");
-            flashMessages.forEach((msg) => {
-                setTimeout(() => {
-                    msg.style.display = "none";
-                }, 5000);
-            });
-        });
-    </script>
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
 </body>
 </html>
