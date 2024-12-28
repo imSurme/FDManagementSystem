@@ -1,5 +1,7 @@
 # ITUdb24
 
-pip install Flask <br>
-pip install flask mysql-connector-python <br>
-pip install flask-session <br>
+| Command                              | Description                              |
+|--------------------------------------|------------------------------------------|
+| `pip install Flask`                  | Installs the Flask framework.            |
+| `pip install mysql-connector-python` | Provides MySQL database connectivity.    |
+| `pip install flask-session`          | Enables server-side session management.  |
