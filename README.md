@@ -1,5 +1,7 @@
 # Requirements
 
+### Required Python Packages
+
 | Command                              | Description                              |
 |--------------------------------------|------------------------------------------|
 | `pip install Flask`                  | Installs the Flask framework.            |
@@ -8,7 +10,7 @@
 
 ### Configure MySQL Connection
 
-To connect your application to the local MySQL database, update the following part of the code in your project:
+To connect your application to the local MySQL database, update the following part of the code in the `db.py` file:
 
 ```python
 connection = mysql.connector.connect(
