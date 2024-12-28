@@ -1,6 +1,7 @@
 from flask import render_template, request, redirect, url_for, session, flash
 from db import get_db_connection
 from mysql.connector import Error
+
 def login():
     if request.method == 'POST':
         role = request.form['role']
@@ -53,6 +54,7 @@ def login():
                 connection.close()
 
     return render_template('login.html')
+    
 def logout():
     session.pop('logged_in', None)
     flash('You have been logged out!', 'success')
