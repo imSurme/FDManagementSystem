@@ -14,7 +14,7 @@ CREATE TABLE users (
     email VARCHAR(150) NOT NULL,
     password VARCHAR(255) NOT NULL,
     age INT NOT NULL CHECK(age >= 18),
-    gender gender ENUM('Male','Female') NOT NULL,
+    gender ENUM('Male','Female') NOT NULL,
     PRIMARY KEY (user_id)
 );
 
