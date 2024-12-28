@@ -1,6 +1,7 @@
 from flask import render_template, request, redirect, url_for, session, flash
 from db import get_db_connection
 from mysql.connector import Error
+
 def restaurants():
     if 'logged_in' not in session:
         return redirect(url_for('login'))
