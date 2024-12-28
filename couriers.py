@@ -1,6 +1,7 @@
 from flask import render_template, request, redirect, url_for, session, flash
 from db import get_db_connection
 from mysql.connector import Error
+
 def couriers():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
@@ -33,6 +34,7 @@ def couriers():
             connection.close()
 
     return render_template('couriers.html', couriers=couriers)
+    
 def courier_action():
     if 'logged_in' not in session:
         return redirect(url_for('login'))
