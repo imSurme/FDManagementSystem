@@ -70,7 +70,6 @@ CREATE TABLE couriers (
     ON UPDATE CASCADE
 );
 
-
 CREATE TABLE menus (
     menu_id INT AUTO_INCREMENT,
     restaurant_id INT NOT NULL,
