@@ -16,7 +16,8 @@ Progress of İbrahim Mert Sürme
 14. admin or restaurant owner login types implemented in app.py
 15. flash messages designed to be in a pop-up style
 16. filter - sort buttons and their courier functions (py-sql) implemented in app.py
-17. js commands have been organized into external files in static/js/.
+17. js commands have been organized into external files in static/js/
 18. flask-session was installed (pip install flask-session) in app.py to store the session 
-    object server-side and eliminate the cookie size limit issue.
+    object server-side and eliminate the cookie size limit issue
 19. functions in app.py moved into seperate files
+20. table structures and foreign key constraints updated
