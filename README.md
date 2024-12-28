@@ -1,5 +1,5 @@
 # ITUdb24
 
-pip install Flask
-pip install flask mysql-connector-python
-pip install flask-session
+pip install Flask <br>
+pip install flask mysql-connector-python <br>
+pip install flask-session <br>
