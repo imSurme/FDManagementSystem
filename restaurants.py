@@ -16,15 +16,37 @@ def restaurants():
 
     try:
         cursor = connection.cursor(dictionary=True)
-        if role == 'admin':
-            cursor.execute('SELECT * FROM restaurants')
-            restaurants = cursor.fetchall()
-        elif role == 'user' and user_id:
-            cursor.execute('SELECT * FROM restaurants WHERE user_id = %s', (user_id,))
+        
+        # Check if there's an active filter in the session
+        if 'active_filter' in session and session['active_filter']:
+            # Use the stored filter parameters
+            filter_params = session['filter_params']
+            query = "SELECT * FROM restaurants WHERE 1=1"
+            params = []
+            
+            if role == 'user':
+                query += " AND user_id = %s"
+                params.append(user_id)
+
+            for key, value in filter_params.items():
+                if value:
+                    if key == 'restaurant_name' or key == 'city' or key == 'cuisine' or key == 'restaurant_address':
+                        query += f" AND {key} LIKE %s"
+                        params.append(f"%{value}%")
+                    else:
+                        query += f" AND {key} = %s"
+                        params.append(value)
+
+            cursor.execute(query, params)
             restaurants = cursor.fetchall()
         else:
-            flash("Unauthorized access!", "danger")
-            return redirect(url_for('index'))
+            # Normal query without filters
+            if role == 'admin':
+                cursor.execute('SELECT * FROM restaurants')
+                restaurants = cursor.fetchall()
+            elif role == 'user' and user_id:
+                cursor.execute('SELECT * FROM restaurants WHERE user_id = %s', (user_id,))
+                restaurants = cursor.fetchall()
 
         cursor.execute('SELECT DISTINCT city FROM restaurants')
         cities = [row['city'] for row in cursor.fetchall()]
@@ -76,57 +98,138 @@ def restaurant_action():
     try:
         cursor = connection.cursor(dictionary=True)
 
-        if action == 'add':
-            restaurant_id = request.form.get('restaurant_id')
-            restaurant_name = request.form.get('restaurant_name')
-            city = request.form.get('city')
-            rating = request.form.get('rating')
-            rating_count = request.form.get('rating_count')
-            average_cost = request.form.get('average_cost')
-            cuisine = request.form.get('cuisine')
-            restaurant_address = request.form.get('restaurant_address')
+        if action in ['add', 'update']:
+            # Store current sort state before operation
+            current_sort_by = request.form.get('last_sort_by') or session.get('last_sort_by')
+            current_sort_order = request.form.get('last_sort_order') or session.get('last_sort_order')
+            
+            # Execute add/update operation
+            if action == 'add':
+                restaurant_id = request.form.get('restaurant_id')
+                restaurant_name = request.form.get('restaurant_name')
+                city = request.form.get('city')
+                rating = request.form.get('rating') or None
+                rating_count = request.form.get('rating_count')
+                average_cost = request.form.get('average_cost')
+                cuisine = request.form.get('cuisine')
+                restaurant_address = request.form.get('restaurant_address')
 
-            if not restaurant_name or not city or not average_cost or not cuisine or not restaurant_address:
-                flash("All fields are required (except Restaurant ID and Rating).", "warning")
-                return redirect(url_for('restaurants'))
-
-            if role == 'user':
-                user_id = session['user_id']
-                cursor.execute("SELECT COUNT(*) FROM restaurants WHERE user_id = %s", (user_id,))
-                result = cursor.fetchone()
-                if result['COUNT(*)'] > 0:
-                    flash("User can only have one restaurant.", "danger")
-                    return redirect(url_for('restaurants'))
-            else:
-                user_id = request.form.get('user_id')
-                cursor.execute("SELECT COUNT(*) FROM restaurants WHERE user_id = %s", (user_id,))
-                result = cursor.fetchone()
-                if result['COUNT(*)'] > 0:
-                    flash("User can only have one restaurant.", "danger")
+                if not restaurant_name or not city or not average_cost or not cuisine or not restaurant_address:
+                    flash("All fields are required (except Restaurant ID and Rating).", "warning")
                     return redirect(url_for('restaurants'))
 
-            if restaurant_id:
-                cursor.execute("SELECT restaurant_id FROM restaurants WHERE restaurant_id = %s", (restaurant_id,))
-                existing_restaurant = cursor.fetchone()
+                if role == 'user':
+                    user_id = session['user_id']
+                    cursor.execute("SELECT COUNT(*) FROM restaurants WHERE user_id = %s", (user_id,))
+                    result = cursor.fetchone()
+                    if result['COUNT(*)'] > 0:
+                        flash("User can only have one restaurant.", "danger")
+                        return redirect(url_for('restaurants'))
+                else:
+                    user_id = request.form.get('user_id')
+                    cursor.execute("SELECT COUNT(*) FROM restaurants WHERE user_id = %s", (user_id,))
+                    result = cursor.fetchone()
+                    if result['COUNT(*)'] > 0:
+                        flash("User can only have one restaurant.", "danger")
+                        return redirect(url_for('restaurants'))
 
-                if existing_restaurant:
-                    cursor.execute("SELECT restaurant_id FROM restaurants")
-                    used_ids = {row['restaurant_id'] for row in cursor.fetchall()}
-                    all_possible_ids = set(range(1, 1001))
-                    unused_ids = all_possible_ids - used_ids
-                    suggestions = ', '.join(map(str, sorted(unused_ids)[:3]))
-                    flash(f"The new Restaurant ID is already in use. Please provide a unique ID. Suggestions: {suggestions}", "warning")
+                if restaurant_id:
+                    cursor.execute("SELECT restaurant_id FROM restaurants WHERE restaurant_id = %s", (restaurant_id,))
+                    existing_restaurant = cursor.fetchone()
+
+                    if existing_restaurant:
+                        cursor.execute("SELECT restaurant_id FROM restaurants")
+                        used_ids = {row['restaurant_id'] for row in cursor.fetchall()}
+                        all_possible_ids = set(range(1, 1001))
+                        unused_ids = all_possible_ids - used_ids
+                        suggestions = ', '.join(map(str, sorted(unused_ids)[:3]))
+                        flash(f"The new Restaurant ID is already in use. Please provide a unique ID. Suggestions: {suggestions}", "warning")
+                        return redirect(url_for('restaurants'))
+
+                    query = 'INSERT INTO restaurants (restaurant_id, user_id, restaurant_name, city, rating, rating_count, average_cost, cuisine, restaurant_address) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
+                    cursor.execute(query, (restaurant_id, user_id, restaurant_name, city, rating, rating_count, average_cost, cuisine, restaurant_address))
+                else:
+                    query = 'INSERT INTO restaurants (user_id, restaurant_name, city, rating, rating_count, average_cost, cuisine, restaurant_address) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
+                    cursor.execute(query, (user_id, restaurant_name, city, rating, rating_count, average_cost, cuisine, restaurant_address))
+                connection.commit()
+                flash("Restaurant added successfully!", "success")
+
+            elif action == 'update':
+                update_restaurant_id = request.form.get('update_restaurant_id')
+                new_restaurant_id = request.form.get('restaurant_id')
+                restaurant_name = request.form.get('restaurant_name')
+                city = request.form.get('city')
+                rating = request.form.get('rating') or None
+                rating_count = request.form.get('rating_count')
+                average_cost = request.form.get('average_cost')
+                cuisine = request.form.get('cuisine')
+                restaurant_address = request.form.get('restaurant_address')
+
+                if not update_restaurant_id:
+                    flash("No restaurant selected for update.", "warning")
                     return redirect(url_for('restaurants'))
 
-                query = 'INSERT INTO restaurants (restaurant_id, user_id, restaurant_name, city, rating, rating_count, average_cost, cuisine, restaurant_address) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
-                cursor.execute(query, (restaurant_id, user_id, restaurant_name, city, rating, rating_count, average_cost, cuisine, restaurant_address))
-            else:
-                query = 'INSERT INTO restaurants (user_id, restaurant_name, city, rating, rating_count, average_cost, cuisine, restaurant_address) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
-                cursor.execute(query, (user_id, restaurant_name, city, rating, rating_count, average_cost, cuisine, restaurant_address))
-            connection.commit()
-            flash("Restaurant added successfully!", "success")
+                if role == 'user':
+                    cursor.execute("SELECT user_id FROM restaurants WHERE restaurant_id = %s", (update_restaurant_id,))
+                    result = cursor.fetchone()
+                    if result['user_id'] != user_id:
+                        flash("Unauthorized action! You can only update your own restaurant.", "danger")
+                        return redirect(url_for('restaurants'))
+
+                if new_restaurant_id != update_restaurant_id:
+                    cursor.execute("SELECT COUNT(*) AS count FROM restaurants WHERE restaurant_id = %s", (new_restaurant_id,))
+                    result = cursor.fetchone()
+                    if result['count'] > 0:
+                        cursor.execute("SELECT restaurant_id FROM restaurants")
+                        used_ids = {row['restaurant_id'] for row in cursor.fetchall()}
+                        all_possible_ids = set(range(1, 1001))
+                        unused_ids = all_possible_ids - used_ids
+                        suggestions = ', '.join(map(str, sorted(unused_ids)[:3]))
+                        flash(f"The new Restaurant ID is already in use. Please provide a unique ID. Suggestions: {suggestions}", "warning")
+                        return redirect(url_for('restaurants'))
+
+                query = "UPDATE restaurants SET restaurant_id = %s, restaurant_name = %s, city = %s, rating = %s, rating_count = %s, average_cost = %s, cuisine = %s, restaurant_address = %s WHERE restaurant_id = %s"
+                cursor.execute(query, (new_restaurant_id, restaurant_name, city, rating, rating_count, average_cost, cuisine, restaurant_address, update_restaurant_id))
+                connection.commit()
+
+                if 'filtered_restaurants' in session:
+                    filtered_restaurants = session['filtered_restaurants']
+                    filtered_ids = [restaurant['restaurant_id'] for restaurant in filtered_restaurants]
+                    query = f"SELECT * FROM restaurants WHERE restaurant_id IN ({','.join(['%s'] * len(filtered_ids))})"
+                    cursor.execute(query, filtered_ids)
+                    restaurants = cursor.fetchall()
+                    flash("Restaurant updated successfully!", "success")
+                    return render_template('restaurants.html', restaurants=restaurants, cities=[], restaurant_names=[], cuisines=[], clear_inputs={})
+                else:
+                    flash("Restaurant updated successfully!", "success")
+
+            # After successful operation, reapply sort if it exists
+            if current_sort_by and current_sort_order:
+                query = "SELECT * FROM restaurants WHERE 1=1"
+                params = []
+                if role == 'user':
+                    query += " AND user_id = %s"
+                    params.append(user_id)
+                
+                query += f" ORDER BY {current_sort_by} {current_sort_order}"
+                cursor.execute(query, params)
+                restaurants = cursor.fetchall()
+                
+                return render_template('restaurants.html', restaurants=restaurants, cities=[], restaurant_names=[], cuisines=[], clear_inputs={})
+
+            # After successful operation, check if we need to reapply filter or sort
+            if 'filtered_restaurants' in session:
+                # Reapply filter
+                return redirect(url_for('restaurant_action', action='filter'))
+            elif 'last_sort_by' in session and 'last_sort_order' in session:
+                # Reapply sort
+                return redirect(url_for('restaurant_action', action='sort'))
 
         elif action == 'delete':
+            # Store current sort state before operation
+            current_sort_by = request.form.get('last_sort_by') or session.get('last_sort_by')
+            current_sort_order = request.form.get('last_sort_order') or session.get('last_sort_order')
+
             selected_ids = request.form.get('selected_restaurants')
             if not selected_ids:
                 flash("No restaurant(s) selected for deletion.", "warning")
@@ -147,56 +250,35 @@ def restaurant_action():
             connection.commit()
             flash(f"Successfully deleted {cursor.rowcount} restaurant(s).", "success")
 
-        elif action == 'update':
-            update_restaurant_id = request.form.get('update_restaurant_id')
-            new_restaurant_id = request.form.get('restaurant_id')
-            restaurant_name = request.form.get('restaurant_name')
-            city = request.form.get('city')
-            rating = request.form.get('rating')
-            rating_count = request.form.get('rating_count')
-            average_cost = request.form.get('average_cost')
-            cuisine = request.form.get('cuisine')
-            restaurant_address = request.form.get('restaurant_address')
-
-            if not update_restaurant_id:
-                flash("No restaurant selected for update.", "warning")
-                return redirect(url_for('restaurants'))
-
-            if role == 'user':
-                cursor.execute("SELECT user_id FROM restaurants WHERE restaurant_id = %s", (update_restaurant_id,))
-                result = cursor.fetchone()
-                if result['user_id'] != user_id:
-                    flash("Unauthorized action! You can only update your own restaurant.", "danger")
-                    return redirect(url_for('restaurants'))
-
-            if new_restaurant_id != update_restaurant_id:
-                cursor.execute("SELECT COUNT(*) AS count FROM restaurants WHERE restaurant_id = %s", (new_restaurant_id,))
-                result = cursor.fetchone()
-                if result['count'] > 0:
-                    cursor.execute("SELECT restaurant_id FROM restaurants")
-                    used_ids = {row['restaurant_id'] for row in cursor.fetchall()}
-                    all_possible_ids = set(range(1, 1001))
-                    unused_ids = all_possible_ids - used_ids
-                    suggestions = ', '.join(map(str, sorted(unused_ids)[:3]))
-                    flash(f"The new Restaurant ID is already in use. Please provide a unique ID. Suggestions: {suggestions}", "warning")
-                    return redirect(url_for('restaurants'))
-
-            query = "UPDATE restaurants SET restaurant_id = %s, restaurant_name = %s, city = %s, rating = %s, rating_count = %s, average_cost = %s, cuisine = %s, restaurant_address = %s WHERE restaurant_id = %s"
-            cursor.execute(query, (new_restaurant_id, restaurant_name, city, rating, rating_count, average_cost, cuisine, restaurant_address, update_restaurant_id))
-            connection.commit()
-            flash("Restaurant updated successfully!", "success")
-
-            # Reapply the filter if it exists
-            if 'filtered_restaurants' in session:
-                filtered_restaurants = session['filtered_restaurants']
-                filtered_ids = [restaurant['restaurant_id'] for restaurant in filtered_restaurants]
-                query = f"SELECT * FROM restaurants WHERE restaurant_id IN ({','.join(['%s'] * len(filtered_ids))})"
-                cursor.execute(query, filtered_ids)
+            # After successful delete, reapply sort if it exists
+            if current_sort_by and current_sort_order:
+                query = "SELECT * FROM restaurants WHERE 1=1"
+                params = []
+                if role == 'user':
+                    query += " AND user_id = %s"
+                    params.append(user_id)
+                
+                query += f" ORDER BY {current_sort_by} {current_sort_order}"
+                cursor.execute(query, params)
                 restaurants = cursor.fetchall()
-                flash("Filtered restaurants updated successfully!", "success")
+                
                 return render_template('restaurants.html', restaurants=restaurants, cities=[], restaurant_names=[], cuisines=[], clear_inputs={})
 
         elif action == 'filter':
+            # Store filter parameters in session
+            session['filter_params'] = {
+                'restaurant_id': request.form.get('restaurant_id'),
+                'user_id': request.form.get('user_id'),
+                'restaurant_name': request.form.get('restaurant_name'),
+                'city': request.form.get('city'),
+                'rating': request.form.get('rating'),
+                'rating_count': request.form.get('rating_count'),
+                'average_cost': request.form.get('average_cost'),
+                'cuisine': request.form.get('cuisine'),
+                'restaurant_address': request.form.get('restaurant_address')
+            }
+            session['active_filter'] = True
+
             restaurant_id = request.form.get('restaurant_id')
             user_id = request.form.get('user_id')
             restaurant_name = request.form.get('restaurant_name')
@@ -230,7 +312,9 @@ def restaurant_action():
                 query += " AND city LIKE %s"
                 params.append(f"%{city}%")
             if rating:
-                if rating.endswith('+'):
+                if rating == '0':
+                    query += " AND rating IS NULL"
+                elif rating.endswith('+'):
                     query += " AND rating >= %s"
                     params.append(float(rating[:-1]))
                 else:
@@ -288,8 +372,12 @@ def restaurant_action():
             return render_template('restaurants.html', restaurants=restaurants, cities=cities, restaurant_names=restaurant_names, cuisines=cuisines, clear_inputs=clear_inputs)
 
         elif action == 'sort':
-            sort_by = request.form.get('sort_by')
-            sort_order = request.form.get('sort_order')
+            sort_by = request.form.get('sort_by') or session.get('last_sort_by')
+            sort_order = request.form.get('sort_order') or session.get('last_sort_order')
+
+            # Store sort parameters in session
+            session['last_sort_by'] = sort_by
+            session['last_sort_order'] = sort_order
 
             if not sort_by or sort_order not in ['ASC', 'DESC']:
                 flash("Invalid sort parameters.", "danger")
@@ -301,7 +389,7 @@ def restaurant_action():
                     query = f"SELECT * FROM restaurants WHERE restaurant_id IN ({','.join(['%s'] * len(filtered_ids))}) ORDER BY {sort_by} {sort_order}"
                     cursor.execute(query, filtered_ids)
                     restaurants = cursor.fetchall()
-                    flash("Filtered restaurants sorted successfully!", "success")
+                    flash("Restaurants sorted successfully!", "success")
                 else:
                     restaurants = []
             else:
@@ -350,9 +438,16 @@ def restaurant_action():
             return render_template('restaurants.html', restaurants=restaurants, cities=cities, restaurant_names=restaurant_names, cuisines=cuisines, clear_inputs=clear_inputs)
 
         elif action == 'clear':
-            if 'filtered_restaurants' in session:
-                session.pop('filtered_restaurants', None)
+            # Clear all stored states
+            for key in ['filtered_restaurants', 'last_sort_by', 'last_sort_order', 'filter_params', 'active_filter']:
+                if key in session:
+                    session.pop(key)
 
+            # If this is an unload clear request, just clear session and return
+            if request.form.get('clear_filter') == 'true':
+                return '', 204  # Return empty response
+
+            # Normal clear operation
             query = "SELECT * FROM restaurants"
             params = []
             if role == 'user':
@@ -361,19 +456,15 @@ def restaurant_action():
 
             cursor.execute(query, params)
             restaurants = cursor.fetchall()
-            flash("All filters, sorting, and selections have been cleared.", "success")
 
-            # Fetch the lists again to ensure they are available after clearing filters
+            # Get fresh lists
             cursor.execute('SELECT DISTINCT city FROM restaurants')
             cities = [row['city'] for row in cursor.fetchall()]
-
             cursor.execute('SELECT DISTINCT restaurant_name FROM restaurants')
             restaurant_names = [row['restaurant_name'] for row in cursor.fetchall()]
-
             cursor.execute('SELECT DISTINCT cuisine FROM restaurants')
             cuisines = [row['cuisine'] for row in cursor.fetchall()]
 
-            # Clear form inputs
             clear_inputs = {
                 'restaurant_id': '',
                 'user_id': '',
@@ -386,7 +477,14 @@ def restaurant_action():
                 'restaurant_address': ''
             }
 
-            return render_template('restaurants.html', restaurants=restaurants, cities=cities, restaurant_names=restaurant_names, cuisines=cuisines, clear_inputs=clear_inputs)
+            flash("All filters, sorting, and selections have been cleared.", "success")
+            return render_template('restaurants.html', 
+                                restaurants=restaurants, 
+                                cities=cities, 
+                                restaurant_names=restaurant_names, 
+                                cuisines=cuisines, 
+                                clear_inputs=clear_inputs)
+
     except Error as e:
         flash(f"An error occurred: {e}", "danger")
     finally:
