@@ -80,7 +80,7 @@ CREATE TABLE menus (
     FOREIGN KEY (restaurant_id) REFERENCES restaurants(restaurant_id)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-    FOREIGN KEY (food_id) REFERENCES food(food_id)
+    FOREIGN KEY (food_id) REFERENCES foods(food_id)
     ON DELETE SET NULL
     ON UPDATE CASCADE
 );
