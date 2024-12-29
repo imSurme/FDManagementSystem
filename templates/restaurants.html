@@ -33,8 +33,13 @@
     <button id="scrollTopBtn"><img class="up-arrow" src="{{ url_for('static', filename='images/up-arrow.png') }}"></button>
     <div class="search-bar">
         <form id="restaurant-form" class="restaurant-form" action="{{ url_for('restaurant_action') }}" method="post">
+            {% if session.role != 'user' %}
             <input type="number" id="restaurant-id" name="restaurant_id" placeholder="Restaurant ID" value="{{ clear_inputs.restaurant_id }}" autocomplete="off">
             <input type="number" id="user-id" name="user_id" placeholder="User ID" value="{{ clear_inputs.user_id }}" autocomplete="off">
+            {% else %}
+            <input type="hidden" id="restaurant-id" name="restaurant_id" value="{{ session.restaurant_id }}">
+            <input type="hidden" id="user-id" name="user_id" value="{{ session.user_id }}">
+            {% endif %}
             <input list="restaurant-name-list" id="restaurant-name" name="restaurant_name" placeholder="Restaurant Name" value="{{ clear_inputs.restaurant_name }}" autocomplete="off">
             <datalist id="restaurant-name-list">
                 {% for name in restaurant_names %}
@@ -68,14 +73,17 @@
             <input type="hidden" id="selected-restaurants" name="selected_restaurants">
             <input type="hidden" id="update-restaurant-id" name="update_restaurant_id">
             <input type="hidden" id="clear-filter" name="clear_filter" value="false">
+            {% if session.role != 'user' %}
             <button class="search-button" type="button" onclick="searchRestaurant()"><img class="button-img" src="{{ url_for('static', filename='images/search.png') }}" alt="search icon"></img>Search</button>
             <button class="clear-button" type="submit" name="action" value="clear" onclick="clearSearch()"><img class="button-img" src="{{ url_for('static', filename='images/clear.png') }}" alt="clear icon"></img>Clear</button>
+            {% endif %}
         </form>
     </div>
     <div class="action-buttons">
-        <button class="add-button" type="submit" name="action" value="add" form="restaurant-form"><img class="button-img" src="{{ url_for('static', filename='images/add.png') }}" alt="add icon"></img>Add</button>
+        <button class="add-button" type="submit" name="action" value="add" form="restaurant-form" {% if session.role == 'user' %}style="display:none;"{% endif %}><img class="button-img" src="{{ url_for('static', filename='images/add.png') }}" alt="add icon"></img>Add</button>
         <button class="delete-button" type="submit" name="action" value="delete" form="restaurant-form" onclick="collectSelected()"><img class="button-img" src="{{ url_for('static', filename='images/delete.png') }}" alt="delete icon"></img>Delete</button>
         <button class="update-button" type="submit" name="action" value="update" form="restaurant-form"><img class="button-img" src="{{ url_for('static', filename='images/update.png') }}" alt="update icon"></img>Update</button>
+        {% if session.role != 'user' %}
         <button class="filter-button" type="submit" name="action" value="filter" form="restaurant-form"><img class="button-img" src="{{ url_for('static', filename='images/filter.png') }}" alt="filter icon"></img>Filter</button>
         <div class="sort-container">
             <button class="sort-button" onclick="toggleSortMenu()"><img class="button-img" src="{{ url_for('static', filename='images/sort.png') }}" alt="sort icon"></img>Sort</button>
@@ -103,6 +111,7 @@
                 </form>
             </div>
         </div>
+        {% endif %}
     </div>
     <div id="navigation" class="hidden">
         <button id="next-match-button" onclick="goToNextMatch()">Next Match</button>
