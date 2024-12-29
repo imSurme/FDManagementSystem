@@ -32,7 +32,7 @@
     </div>
     <div class="card-container">
         <div class="card">
-            <a href="{{ url_for('users') }}">
+            <a href="">
                 <div class="container">
                     <img src="{{ url_for('static', filename='images/user.png') }}" alt="user icon">
                     <h4>{{ 'Profile' if session['role'] == 'user' else 'Users' }}</h4>
@@ -48,7 +48,7 @@
             </a>
         </div>
         <div class="card">
-            <a href="{{ url_for('menus') }}">
+            <a href="">
                 <div class="container">
                     <img src="{{ url_for('static', filename='images/menu.png') }}" alt="menu icon">
                     <h4>{{ 'Menu' if session['role'] == 'user' else 'Menus' }}</h4>
@@ -56,7 +56,7 @@
             </a>
         </div>
         <div class="card">
-            <a href="{{ url_for('foods') }}">
+            <a href="">
                 <div class="container">
                     <img src="{{ url_for('static', filename='images/food.png') }}" alt="food icon">
                     <h4>Foods</h4>
@@ -64,7 +64,7 @@
             </a>
         </div>
         <div class="card">
-            <a href="{{ url_for('orders') }}">
+            <a href="">
                 <div class="container">
                     <img src="{{ url_for('static', filename='images/order.png') }}" alt="order icon">
                     <h4>Orders</h4>
