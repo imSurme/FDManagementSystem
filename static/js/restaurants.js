@@ -139,6 +139,7 @@ function goToNextMatch() {
 }
 
 function clearSearch() {
+    // Basic form clearing
     document.getElementById('restaurant-id').value = "";
     document.getElementById('user-id').value = "";
     document.getElementById('restaurant-name').value = "";
@@ -148,18 +149,36 @@ function clearSearch() {
     document.getElementById('restaurant-average-cost').value = "";
     document.getElementById('restaurant-cuisine').value = "";
     document.getElementById('restaurant-address').value = "";
-
-    document.getElementById('clear-filter').value = "true";
-    document.getElementById('restaurant-form').submit();
-
+    
+    // Clear checkboxes and highlights
     document.querySelectorAll('.table-card').forEach(card => card.classList.remove('highlight'));
     document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
-
-    matchedCards = [];
-    currentMatchIndex = 0;
-
-    document.getElementById('navigation').classList.add('hidden');
+    
+    // Submit the form with clear action
+    const form = document.getElementById('restaurant-form');
+    const actionInput = document.createElement('input');
+    actionInput.type = 'hidden';
+    actionInput.name = 'action';
+    actionInput.value = 'clear';
+    form.appendChild(actionInput);
+    
+    form.submit();
 }
+
+// Separate the unload handler into its own function
+function clearOnUnload() {
+    fetch('/restaurant_action', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'action=clear&clear_filter=true',
+        keepalive: true
+    });
+}
+
+// Update the unload event listener
+window.addEventListener('beforeunload', clearOnUnload);
 
 function collectSelected() {
     const selectedRestaurants = [];
@@ -224,3 +243,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 5000);
     });
 });
+
+// Add window unload event handler
+window.addEventListener('beforeunload', clearOnUnload);
