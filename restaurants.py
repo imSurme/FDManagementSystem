@@ -7,6 +7,7 @@ def restaurants():
         return redirect(url_for('login'))
 
     role = session.get('role')
+    user_id = session.get('user_id') if role == 'user' else None
 
     connection = get_db_connection()
     if connection is None:
@@ -18,9 +19,12 @@ def restaurants():
         if role == 'admin':
             cursor.execute('SELECT * FROM restaurants')
             restaurants = cursor.fetchall()
-        else:
-            cursor.execute('SELECT * FROM restaurants WHERE user_id = %s', (session['user_id'],))
+        elif role == 'user' and user_id:
+            cursor.execute('SELECT * FROM restaurants WHERE user_id = %s', (user_id,))
             restaurants = cursor.fetchall()
+        else:
+            flash("Unauthorized access!", "danger")
+            return redirect(url_for('index'))
 
         cursor.execute('SELECT DISTINCT city FROM restaurants')
         cities = [row['city'] for row in cursor.fetchall()]
@@ -62,6 +66,7 @@ def restaurant_action():
     action = request.form.get('action')
     role = session.get('role')
     user_id = session.get('user_id') if role == 'user' else None
+    restaurant_id_session = session.get('restaurant_id') if role == 'user' else None
 
     connection = get_db_connection()
     if connection is None:
@@ -87,6 +92,11 @@ def restaurant_action():
 
             if role == 'user':
                 user_id = session['user_id']
+                cursor.execute("SELECT COUNT(*) FROM restaurants WHERE user_id = %s", (user_id,))
+                result = cursor.fetchone()
+                if result['COUNT(*)'] > 0:
+                    flash("User can only have one restaurant.", "danger")
+                    return redirect(url_for('restaurants'))
             else:
                 user_id = request.form.get('user_id')
 
@@ -120,6 +130,9 @@ def restaurant_action():
             selected_ids = selected_ids.split(',')
 
             if role == 'user':
+                if any(restaurant_id != restaurant_id_session for restaurant_id in selected_ids):
+                    flash("Unauthorized action! You can only delete your own restaurant.", "danger")
+                    return redirect(url_for('restaurants'))
                 query = "DELETE FROM restaurants WHERE restaurant_id IN ({}) AND user_id = %s".format(','.join(['%s'] * len(selected_ids)))
                 cursor.execute(query, selected_ids + [user_id])
             else:
@@ -144,9 +157,12 @@ def restaurant_action():
                 flash("No restaurant selected for update.", "warning")
                 return redirect(url_for('restaurants'))
 
-            if role == 'user' and new_restaurant_id != update_restaurant_id:
-                flash("Unauthorized action! You cannot change your Restaurant's ID.", "danger")
-                return redirect(url_for('restaurants'))
+            if role == 'user':
+                cursor.execute("SELECT user_id FROM restaurants WHERE restaurant_id = %s", (update_restaurant_id,))
+                result = cursor.fetchone()
+                if result['user_id'] != user_id:
+                    flash("Unauthorized action! You can only update your own restaurant.", "danger")
+                    return redirect(url_for('restaurants'))
 
             if new_restaurant_id != update_restaurant_id:
                 cursor.execute("SELECT COUNT(*) AS count FROM restaurants WHERE restaurant_id = %s", (new_restaurant_id,))
@@ -165,8 +181,19 @@ def restaurant_action():
             connection.commit()
             flash("Restaurant updated successfully!", "success")
 
+            # Reapply the filter if it exists
+            if 'filtered_restaurants' in session:
+                filtered_restaurants = session['filtered_restaurants']
+                filtered_ids = [restaurant['restaurant_id'] for restaurant in filtered_restaurants]
+                query = f"SELECT * FROM restaurants WHERE restaurant_id IN ({','.join(['%s'] * len(filtered_ids))})"
+                cursor.execute(query, filtered_ids)
+                restaurants = cursor.fetchall()
+                flash("Filtered restaurants updated successfully!", "success")
+                return render_template('restaurants.html', restaurants=restaurants, cities=[], restaurant_names=[], cuisines=[], clear_inputs={})
+
         elif action == 'filter':
             restaurant_id = request.form.get('restaurant_id')
+            user_id = request.form.get('user_id')
             restaurant_name = request.form.get('restaurant_name')
             city = request.form.get('city')
             rating = request.form.get('rating')
@@ -175,18 +202,12 @@ def restaurant_action():
             cuisine = request.form.get('cuisine')
             restaurant_address = request.form.get('restaurant_address')
 
-            if not any([restaurant_id, restaurant_name, city, rating, rating_count, average_cost, cuisine, restaurant_address]):
+            if not any([restaurant_id, user_id, restaurant_name, city, rating, rating_count, average_cost, cuisine, restaurant_address]):
                 flash("Please provide at least one filter criteria.", "warning")
                 return redirect(url_for('restaurants'))
 
             query = "SELECT * FROM restaurants WHERE 1=1"
             params = []
-
-            if 'filtered_restaurants' in session and session['filtered_restaurants']:
-                filtered_ids = [restaurant['restaurant_id'] for restaurant in session['filtered_restaurants']]
-                query += " AND restaurant_id IN ({})".format(','.join(['%s'] * len(filtered_ids)))
-                params.extend(filtered_ids)
-
             if role == 'user':
                 query += " AND user_id = %s"
                 params.append(user_id)
@@ -194,6 +215,9 @@ def restaurant_action():
             if restaurant_id:
                 query += " AND restaurant_id = %s"
                 params.append(restaurant_id)
+            if user_id:
+                query += " AND user_id = %s"
+                params.append(user_id)
             if restaurant_name:
                 query += " AND restaurant_name LIKE %s"
                 params.append(f"%{restaurant_name}%")
@@ -272,6 +296,7 @@ def restaurant_action():
                     query = f"SELECT * FROM restaurants WHERE restaurant_id IN ({','.join(['%s'] * len(filtered_ids))}) ORDER BY {sort_by} {sort_order}"
                     cursor.execute(query, filtered_ids)
                     restaurants = cursor.fetchall()
+                    flash("Filtered restaurants sorted successfully!", "success")
                 else:
                     restaurants = []
             else:
@@ -284,6 +309,7 @@ def restaurant_action():
                 query += f" ORDER BY {sort_by} {sort_order}"
                 cursor.execute(query, params)
                 restaurants = cursor.fetchall()
+                flash("Restaurants sorted successfully!", "success")
 
             if not restaurants:
                 flash("No restaurants found to sort.", "warning")
