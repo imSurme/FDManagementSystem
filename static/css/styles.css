@@ -294,6 +294,16 @@ img {
     gap: 10px;
 }
 
+.restaurant-form input {
+    display: block;
+    width: 150px;
+    margin-bottom: 15px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
 .login-button {
     width: 100%;
     padding: 15px;
@@ -458,9 +468,9 @@ img {
 }
 
 #restaurant-rating-count {
-    width: 100%;
+    width: 120px;
     height: 38px;
-    padding: 10px;
+    padding: 5px;
     box-sizing: border-box;
     border: 1px solid #ddd;
     border-radius: 5px;
