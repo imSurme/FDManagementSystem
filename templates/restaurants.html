@@ -75,8 +75,8 @@
             <input type="hidden" id="clear-filter" name="clear_filter" value="false">
             {% if session.role != 'user' %}
             <button class="search-button" type="button" onclick="searchRestaurant()"><img class="button-img" src="{{ url_for('static', filename='images/search.png') }}" alt="search icon"></img>Search</button>
-            <button class="clear-button" type="submit" name="action" value="clear" onclick="clearSearch()"><img class="button-img" src="{{ url_for('static', filename='images/clear.png') }}" alt="clear icon"></img>Clear</button>
             {% endif %}
+            <button class="clear-button" type="submit" name="action" value="clear" onclick="clearSearch()"><img class="button-img" src="{{ url_for('static', filename='images/clear.png') }}" alt="clear icon"></img>Clear</button>
         </form>
     </div>
     <div class="action-buttons">
