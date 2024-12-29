@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Restaurants List</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Restaurants</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     <nav>
@@ -16,22 +16,115 @@
             <li><a href="/logout">Logout</a></li>
         </ul>
     </nav>
-{% with messages = get_flashed_messages(with_categories=True) %}
-    {% if messages %}
-        <ul class="flashes">
-            {% for category, message in messages %}
-                <li class="flash {{ category }}">{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-{% endwith %}
-    <h1 class="restaurant title">Restaurant Data</h1>
-    <div class="list">
-        <ul>
-        {% for restaurant in restaurants %}
-            <li>{{ restaurant['restaurant_name'] }} - {{ restaurant['city'] }} - {{ restaurant['rating'] }} - {{ restaurant['cuisine'] }} - {{ restaurant['restaurant_address'] }}</li>
-        {% endfor %}
-        </ul>
+    <div class="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                <div class="flash-message {{ category }}">
+                    {{ message }}
+                    <button class="close-flash" onclick="this.parentElement.style.display='none';">&times;</button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
     </div>
+    <button id="scrollTopBtn"><img class="up-arrow" src="{{ url_for('static', filename='images/up-arrow.png') }}"></button>
+    <div class="search-bar">
+        <form id="restaurant-form" class="restaurant-form" action="{{ url_for('restaurant_action') }}" method="post">
+            <input type="number" id="restaurant-id" name="restaurant_id" placeholder="Restaurant ID" value="{{ clear_inputs.restaurant_id }}" autocomplete="off">
+            <input type="number" id="user-id" name="user_id" placeholder="User ID" value="{{ clear_inputs.user_id }}" autocomplete="off">
+            <input list="restaurant-name-list" id="restaurant-name" name="restaurant_name" placeholder="Restaurant Name" value="{{ clear_inputs.restaurant_name }}" autocomplete="off">
+            <datalist id="restaurant-name-list">
+                {% for name in restaurant_names %}
+                <option value="{{ name }}">
+                {% endfor %}
+            </datalist>
+            <input list="city-list" id="restaurant-city" name="city" placeholder="City" value="{{ clear_inputs.city }}" autocomplete="off">
+            <datalist id="city-list">
+                {% for city in cities %}
+                <option value="{{ city }}">
+                {% endfor %}
+            </datalist>
+            <input type="number" step="0.1" id="restaurant-rating" name="rating" placeholder="Rating" value="{{ clear_inputs.rating }}" autocomplete="off" min="0" max="5"> 
+            <select id="restaurant-rating-count" name="rating_count">
+                <option value="" hidden>Rating Count</option>
+                <option value="Too Few Ratings" {% if clear_inputs.rating_count == 'Too Few Ratings' %}selected{% endif %}>Too Few Ratings</option>
+                <option value="20+ ratings" {% if clear_inputs.rating_count == '20+ ratings' %}selected{% endif %}>20+ ratings</option>
+                <option value="50+ ratings" {% if clear_inputs.rating_count == '50+ ratings' %}selected{% endif %}>50+ ratings</option>
+                <option value="100+ ratings" {% if clear_inputs.rating_count == '100+ ratings' %}selected{% endif %}>100+ ratings</option>
+                <option value="500+ ratings" {% if clear_inputs.rating_count == '500+ ratings' %}selected{% endif %}>500+ ratings</option>
+                <option value="1K+ ratings" {% if clear_inputs.rating_count == '1K+ ratings' %}selected{% endif %}>1K+ ratings</option>
+            </select>
+            <input type="number" id="restaurant-average-cost" name="average_cost" placeholder="Average Cost" value="{{ clear_inputs.average_cost }}" autocomplete="off">
+            <input list="cuisine-list" id="restaurant-cuisine" name="cuisine" placeholder="Cuisine" value="{{ clear_inputs.cuisine }}" autocomplete="off">
+            <datalist id="cuisine-list">
+                {% for cuisine in cuisines %}
+                <option value="{{ cuisine }}">
+                {% endfor %}
+            </datalist>
+            <input type="text" id="restaurant-address" name="restaurant_address" placeholder="Address" value="{{ clear_inputs.restaurant_address }}" autocomplete="off">
+            <input type="hidden" id="selected-restaurants" name="selected_restaurants">
+            <input type="hidden" id="update-restaurant-id" name="update_restaurant_id">
+            <input type="hidden" id="clear-filter" name="clear_filter" value="false">
+            <button class="search-button" type="button" onclick="searchRestaurant()"><img class="button-img" src="{{ url_for('static', filename='images/search.png') }}" alt="search icon"></img>Search</button>
+            <button class="clear-button" type="submit" name="action" value="clear" onclick="clearSearch()"><img class="button-img" src="{{ url_for('static', filename='images/clear.png') }}" alt="clear icon"></img>Clear</button>
+        </form>
+    </div>
+    <div class="action-buttons">
+        <button class="add-button" type="submit" name="action" value="add" form="restaurant-form"><img class="button-img" src="{{ url_for('static', filename='images/add.png') }}" alt="add icon"></img>Add</button>
+        <button class="delete-button" type="submit" name="action" value="delete" form="restaurant-form" onclick="collectSelected()"><img class="button-img" src="{{ url_for('static', filename='images/delete.png') }}" alt="delete icon"></img>Delete</button>
+        <button class="update-button" type="submit" name="action" value="update" form="restaurant-form"><img class="button-img" src="{{ url_for('static', filename='images/update.png') }}" alt="update icon"></img>Update</button>
+        <button class="filter-button" type="submit" name="action" value="filter" form="restaurant-form"><img class="button-img" src="{{ url_for('static', filename='images/filter.png') }}" alt="filter icon"></img>Filter</button>
+        <div class="sort-container">
+            <button class="sort-button" onclick="toggleSortMenu()"><img class="button-img" src="{{ url_for('static', filename='images/sort.png') }}" alt="sort icon"></img>Sort</button>
+            <div id="overlay" class="hidden"></div>
+            <div class="sort-menu hidden" id="sort-menu">
+                <h3>Sort By</h3>
+                <form id="sort-form" action="{{ url_for('restaurant_action') }}" method="post">
+                    <select name="sort_by" id="sort-by">
+                        <option value="restaurant_id">Restaurant ID</option>
+                        <option value="user_id">User ID</option>
+                        <option value="restaurant_name">Name</option>
+                        <option value="city">City</option>
+                        <option value="rating">Rating</option>
+                        <option value="rating_count">Rating Count</option>
+                        <option value="average_cost">Average Cost</option>
+                        <option value="cuisine">Cuisine</option>
+                        <option value="restaurant_address">Address</option>
+                    </select>
+                    <h3 id="second-h3">Order</h3>
+                    <select name="sort_order" id="sort-order">
+                        <option value="ASC">Ascending</option>
+                        <option value="DESC">Descending</option>
+                    </select>
+                    <button type="submit" name="action" value="sort">Apply</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="navigation" class="hidden">
+        <button id="next-match-button" onclick="goToNextMatch()">Next Match</button>
+    </div>
+    <div class="list" id="restaurant-list">
+        {% for restaurant in restaurants %}
+        <div class="table-card" id="restaurant-card-{{ restaurant['restaurant_id'] }}">
+            <input type="checkbox" id="restaurant-{{ loop.index }}" name="selected_restaurants" value="{{ restaurant['restaurant_id'] }}">
+            <label for="restaurant-{{ loop.index }}">
+                <p><strong>Restaurant ID:</strong> <span class="restaurant-id">{{ restaurant['restaurant_id'] }}</span></p>
+                <p><strong>User ID:</strong> <span class="user-id">{{ restaurant['user_id'] }}</span></p>
+                <p><strong>Name:</strong> <span class="restaurant-name">{{ restaurant['restaurant_name'] }}</span></p>
+                <p><strong>City:</strong> <span class="restaurant-city">{{ restaurant['city'] }}</span></p>
+                <p><strong>Rating:</strong> <span class="restaurant-rating">{{ restaurant['rating'] }}</span></p>
+                <p><strong>Rating Count:</strong> <span class="restaurant-rating-count">{{ restaurant['rating_count'] }}</span></p>
+                <p><strong>Average Cost:</strong> <span class="restaurant-average-cost">{{ restaurant['average_cost'] }}</span></p>
+                <p><strong>Cuisine:</strong> <span class="restaurant-cuisine">{{ restaurant['cuisine'] }}</span></p>
+                <p><strong>Address:</strong> <span class="restaurant-address">{{ restaurant['restaurant_address'] }}</span></p>
+            </label>
+        </div>
+        {% endfor %}
+    </div>
+    <script src="{{ url_for('static', filename='js/restaurants.js') }}"></script>
 </body>
 </html>
