@@ -40,7 +40,7 @@
             <input type="hidden" id="restaurant-id" name="restaurant_id" value="{{ session.restaurant_id }}">
             <input type="hidden" id="user-id" name="user_id" value="{{ session.user_id }}">
             {% endif %}
-            <input list="restaurant-name-list" id="restaurant-name" name="restaurant_name" placeholder="Restaurant Name" value="{{ clear_inputs.restaurant_name }}" autocomplete="off">
+            <input list="restaurant-name-list" id="restaurant-name" name="restaurant_name" placeholder="Name" value="{{ clear_inputs.restaurant_name }}" autocomplete="off">
             <datalist id="restaurant-name-list">
                 {% for name in restaurant_names %}
                 <option value="{{ name }}">
