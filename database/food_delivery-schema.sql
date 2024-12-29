@@ -3,7 +3,7 @@ USE food_delivery;
 
 CREATE TABLE admins (
     admin_id INT AUTO_INCREMENT,
-    email VARCHAR(150) NOT NULL,
+    email VARCHAR(150) NOT NULL CHECK (LENGTH(email) >= 5 AND email LIKE '%@%'),
     password VARCHAR(255) NOT NULL,
     PRIMARY KEY (admin_id)
 );
@@ -11,7 +11,7 @@ CREATE TABLE admins (
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
-    email VARCHAR(150) NOT NULL,
+    email VARCHAR(150) NOT NULL CHECK (LENGTH(email) >= 5 AND email LIKE '%@%'),
     password VARCHAR(255) NOT NULL,
     age INT NOT NULL CHECK(age >= 18),
     gender ENUM('Male','Female') NOT NULL,
