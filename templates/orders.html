@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <nav>
+        <div class="logo navbar">
+            <a href="/"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo"></a>
+            <h1><a href="/">Food Delivery Management System</a> / <span style="margin-left: 10px; color: white">Orders</span></h1>
+        </div>
+        <ul class="navbar">
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+    <div class="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">
+                        {{ message }}
+                        <button class="close-flash" onclick="this.parentElement.style.display='none';">&times;</button>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+    <button id="scrollTopBtn"><img class="up-arrow" src="{{ url_for('static', filename='images/up-arrow.png') }}"></button>
+    <div class="search-bar">
+        <form id="order-form" class="order-form" action="{{ url_for('order_action') }}" method="post">
+            <input type="number" id="order-id" name="order_id" placeholder="Order ID">
+            <input type="number" id="order-restaurant-id" name="restaurant_id" placeholder="Restaurant ID">
+            <select id="order-status" name="order_status">
+                <option value="" hidden>Status</option>
+                <option value="Canceled">Canceled</option>
+                <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
+            </select>
+            <input type="date" id="order-date" name="order_date" placeholder="Order Date">
+            <input type="number" id="order-sales-quantity" name="sales_qty" placeholder="Sales Quantity">
+            <input type="number" id="order-sales-amount" name="sales_amount" placeholder="Sales Amount">
+            <input type="hidden" id="selected-orders" name="selected_orders">
+            <input type="hidden" id="update-order-id" name="update_order_id">
+            <input type="hidden" id="clear-filter" name="clear_filter" value="false">
+        </form>
+        <button class="search-button" onclick="searchOrder()"><img class="button-img" src="{{ url_for('static', filename='images/search.png') }}" alt="search icon"></img>Search</button>
+        <button class="clear-button" type="submit" form="order-form" name="action" value="clear" onclick="clearSearch()"><img class="button-img" src="{{ url_for('static', filename='images/clear.png') }}" alt="clear icon"></img>Clear</button>
+    </div>
+    <div class="action-buttons">
+        <button class="add-button" type="submit" name="action" value="add" form="order-form"><img class="button-img" src="{{ url_for('static', filename='images/add.png') }}" alt="add icon"></img>Add</button>
+        <button class="delete-button" type="submit" name="action" value="delete" form="order-form" onclick="collectSelected()"><img class="button-img" src="{{ url_for('static', filename='images/delete.png') }}" alt="delete icon"></img>Delete</button>
+        <button class="update-button" type="submit" name="action" value="update" form="order-form"><img class="button-img" src="{{ url_for('static', filename='images/update.png') }}" alt="update icon"></img>Update</button>
+        <button class="filter-button" type="submit" name="action" value="filter" form="order-form"><img class="button-img" src="{{ url_for('static', filename='images/filter.png') }}" alt="filter icon"></img>Filter</button>
+        <div class="sort-container">
+            <button class="sort-button" onclick="toggleSortMenu()"><img class="button-img" src="{{ url_for('static', filename='images/sort.png') }}" alt="sort icon"></img>Sort</button>
+            <div id="overlay" class="hidden"></div>
+            <div class="sort-menu hidden" id="sort-menu">
+                <h3>Sort By</h3>
+                <form id="sort-form" action="{{ url_for('order_action') }}" method="post">
+                    <select name="sort_by" id="sort-by">
+                        <option value="order_id">ID</option>
+                        <option value="order_restaurant_id">Restaurant ID</option>
+                        <option value="order_status">Status</option>
+                        <option value="order_date">Order Date</option>
+                        <option value="sales_qty">Sales Quantity</option>
+                        <option value="sales_amount">Sales Amount</option>
+                    </select>
+                    <h3 id="second-h3">Order</h3>
+                    <select name="sort_order" id="sort-order">
+                        <option value="ASC">Ascending</option>
+                        <option value="DESC">Descending</option>
+                    </select>
+                    <button type="submit" name="action" value="sort">Apply</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="navigation" class="hidden">
+        <button id="next-match-button" onclick="goToNextMatch()">Next Match</button>
+    </div>
+    <div class="list" id="order-list">
+        {% for order in orders %}
+        <div class="table-card" id="order-card-{{ order['order_id'] }}">
+            <input type="checkbox" id="order-{{ loop.index }}" name="selected_orders" value="{{ order['order_id'] }}">
+            <label for="order-{{ loop.index }}">
+                <p><strong>ID:</strong> <span class="order-id">{{ order['order_id'] }}</span></p>
+                <p><strong>Restaurant ID:</strong> <span class="order-restaurant-id">{{ order['restaurant_id'] }}</span></p>
+                <p><strong>Order Date:</strong> <span class="order-date">{{ order['order_date'] }}</span></p>
+                <p><strong>Status:</strong> <span class="order-status">{{ order['order_status'] }}</span></p>
+                <p><strong>Sales Quantity:</strong> <span class="order-sales-quantity">{{ order['sales_qty'] }}</span></p>
+                <p><strong>Sales Amount:</strong> <span class="order-sales-amount">{{ order['sales_amount'] }}</span></p>
+            </label>
+        </div>
+        {% endfor %}
+    </div>
+    <script src="{{ url_for('static', filename='js/orders.js') }}"></script>
+</body>
+</html>

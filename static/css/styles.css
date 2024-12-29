@@ -507,3 +507,19 @@ img {
     display: flex;
     flex-direction: column;
 }
+
+/* Orders Page Styles */
+.order-form {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+#order-status {
+    width: 100%;
+    height: 38px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
