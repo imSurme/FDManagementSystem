@@ -80,7 +80,7 @@
         </form>
     </div>
     <div class="action-buttons">
-        <button class="add-button" type="submit" name="action" value="add" form="restaurant-form" {% if session.role == 'user' %}style="display:none;"{% endif %}><img class="button-img" src="{{ url_for('static', filename='images/add.png') }}" alt="add icon"></img>Add</button>
+        <button class="add-button" type="submit" name="action" value="add" form="restaurant-form"><img class="button-img" src="{{ url_for('static', filename='images/add.png') }}" alt="add icon"></img>Add</button>
         <button class="delete-button" type="submit" name="action" value="delete" form="restaurant-form" onclick="collectSelected()"><img class="button-img" src="{{ url_for('static', filename='images/delete.png') }}" alt="delete icon"></img>Delete</button>
         <button class="update-button" type="submit" name="action" value="update" form="restaurant-form"><img class="button-img" src="{{ url_for('static', filename='images/update.png') }}" alt="update icon"></img>Update</button>
         {% if session.role != 'user' %}
