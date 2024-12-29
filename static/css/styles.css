@@ -281,13 +281,7 @@ img {
     background-color: #0056b3;
 }
 
-.courier-form {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-}
-
-.restaurant-form {
+.courier-form, .restaurant-form {
     display: flex;
     flex-direction: row;
     gap: 10px;
