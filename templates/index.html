@@ -13,6 +13,24 @@
             <h1><a href="/">Food Delivery Management System</a></h1>
         </div>
         <ul class="navbar">
+            <li class="dropdown">
+                <a href="" class="dropbtn">Statistics</a>
+                <div class="dropdown-content">
+                    {% if role == 'admin' %}
+                        <a href="">Total Users: <span style="font-size: 20px">{{ statistics['users'] }}</span></a>
+                        <a href="">Total Restaurants: <span style="font-size: 20px">{{ statistics['restaurants'] }}</span></a>
+                        <a href="">Total Menus: <span style="font-size: 20px">{{ statistics['menus'] }}</span></a>
+                        <a href="">Total Foods: <span style="font-size: 20px">{{ statistics['foods'] }}</span></a>
+                        <a href="">Total Orders: <span style="font-size: 20px">{{ statistics['orders'] }}</span></a>
+                        <a href="">Total Couriers: <span style="font-size: 20px">{{ statistics['couriers'] }}</span></a>
+                    {% elif role == 'user' %}
+                        <a href="">Your Menus: <span style="font-size: 20px">{{ statistics['menus'] }}</span></a>
+                        <a href="">Your Foods: <span style="font-size: 20px">{{ statistics['foods'] }}</span></a>
+                        <a href="">Your Orders: <span style="font-size: 20px">{{ statistics['orders'] }}</span></a>
+                        <a href="">Your Couriers: <span style="font-size: 20px">{{ statistics['couriers'] }}</span></a>
+                    {% endif %}
+                </div>
+            </li>
             <li><a href="/logout">Logout</a></li>
         </ul>
     </nav>
