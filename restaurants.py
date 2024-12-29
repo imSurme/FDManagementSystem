@@ -99,6 +99,11 @@ def restaurant_action():
                     return redirect(url_for('restaurants'))
             else:
                 user_id = request.form.get('user_id')
+                cursor.execute("SELECT COUNT(*) FROM restaurants WHERE user_id = %s", (user_id,))
+                result = cursor.fetchone()
+                if result['COUNT(*)'] > 0:
+                    flash("User can only have one restaurant.", "danger")
+                    return redirect(url_for('restaurants'))
 
             if restaurant_id:
                 cursor.execute("SELECT restaurant_id FROM restaurants WHERE restaurant_id = %s", (restaurant_id,))
