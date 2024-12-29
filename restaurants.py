@@ -130,7 +130,7 @@ def restaurant_action():
             selected_ids = selected_ids.split(',')
 
             if role == 'user':
-                if any(restaurant_id != restaurant_id_session for restaurant_id in selected_ids):
+                if any(restaurant_id != str(restaurant_id_session) for restaurant_id in selected_ids):
                     flash("Unauthorized action! You can only delete your own restaurant.", "danger")
                     return redirect(url_for('restaurants'))
                 query = "DELETE FROM restaurants WHERE restaurant_id IN ({}) AND user_id = %s".format(','.join(['%s'] * len(selected_ids)))
