@@ -97,8 +97,7 @@ nav .logo img {
 }
 
 .navbar a:hover {
-    background-color: #f95959;
-    border-radius: 5px;
+    color: #cccccc;
 }
 
 .flash-container {
