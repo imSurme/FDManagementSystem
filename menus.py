@@ -140,24 +140,28 @@ def menus_action():
                 flash("No menu item(s) selected for deletion.", "warning")
                 return redirect(url_for('menus'))
 
-            selected_ids = selected_ids.split(',')
-            print("Selected IDs after split:", selected_ids)  # Debug print
-            
             try:
+                selected_ids = selected_ids.split(',')
+                
+                # Verify user has permission to delete these menu items
                 if role == 'user':
-                    query = "DELETE FROM menus WHERE menu_id IN ({}) AND restaurant_id = %s".format(','.join(['%s'] * len(selected_ids)))
+                    # For users, verify they own the restaurant these menu items belong to
+                    query = """
+                        DELETE FROM menus 
+                        WHERE menu_id IN ({}) 
+                        AND restaurant_id = %s
+                    """.format(','.join(['%s'] * len(selected_ids)))
                     params = selected_ids + [restaurant_id_session]
                 else:
-                    query = "DELETE FROM menus WHERE menu_id IN ({})".format(','.join(['%s'] * len(selected_ids)))
+                    # For admins, allow deletion of any menu items
+                    query = """
+                        DELETE FROM menus 
+                        WHERE menu_id IN ({})
+                    """.format(','.join(['%s'] * len(selected_ids)))
                     params = selected_ids
 
-                print("Query:", query)  # Debug print
-                print("Parameters:", params)  # Debug print
-                
                 cursor.execute(query, params)
                 connection.commit()
-                
-                print("Rows affected:", cursor.rowcount)  # Debug print
                 
                 if cursor.rowcount > 0:
                     flash(f"Successfully deleted {cursor.rowcount} menu item(s).", "success")
@@ -165,9 +169,9 @@ def menus_action():
                     flash("No menu items were deleted. Please check your permissions.", "warning")
                     
             except Error as e:
-                print(f"Database error: {str(e)}")
-                flash(f"Error deleting menu items: {str(e)}", "danger")
+                print(f"Database error: {str(e)}")  # Debug print
                 connection.rollback()
+                flash(f"Error deleting menu items: {str(e)}", "danger")
 
             return redirect(url_for('menus'))
 
