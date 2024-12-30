@@ -359,42 +359,64 @@ img {
 
 .sort-container {
     position: relative;
+    z-index: 1001;
 }
 
 .sort-menu {
-    position: absolute;
-    top: 0;
-    left: calc(100% + 10px);
-    z-index: 999;
-    background-color: dimgray;
+    position: fixed;
+    background-color: white;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    display: none;
-    text-align: center;
+    border-radius: 4px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 1001;
+    min-width: 200px;
 }
 
-.sort-menu h3 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: bold;
-    color: white;
+.sort-menu.hidden {
+    display: none;
+}
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1000;
+}
+
+#overlay.hidden {
+    display: none;
+}
+
+.sort-button {
+    position: relative;
+}
+
+.sort-menu select {
+    width: 100%;
+    margin: 5px 0;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
 }
 
 .sort-menu button {
-    background-color: #007BFF;
+    width: 100%;
+    margin-top: 10px;
+    padding: 5px;
+    background-color: #4CAF50;
     color: white;
     border: none;
-    padding: 5px;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
-    margin-top: 10px;
-    margin-bottom: 0;
 }
 
 .sort-menu button:hover {
-    background-color: #0056b3;
+    background-color: #45a049;
 }
 
 #sort-by {
@@ -467,17 +489,6 @@ img {
     box-sizing: border-box;
     border: 1px solid #ddd;
     border-radius: 5px;
-}
-
-#overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 998;
-    display: none;
 }
 
 .dropdown-content {
@@ -555,4 +566,49 @@ img {
     background-repeat: no-repeat;
     background-position: right 8px center;
     padding-right: 30px;
+}
+
+.food-form {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.food-form input,
+.food-form select {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Add these styles for select elements in the food form */
+.food-form select {
+    display: block;
+    width: 120px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    height: 38px;
+    background-color: white;
+}
+
+/* Style the dropdown arrow for food form */
+.food-form select::-ms-expand {
+    display: none;
+}
+
+.food-form select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    padding-right: 30px;
+}
+
+/* Add some spacing between elements */
+.sort-menu h3 {
+    margin: 10px 0;
+    color: #333;
 }
