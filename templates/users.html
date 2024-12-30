@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <nav>
+        <div class="logo navbar">
+            <a href="/"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo"></a>
+            <h1><a href="/">Food Delivery Management System</a> / <span style="margin-left: 10px; color: white">Users</span></h1>
+        </div>
+        <ul class="navbar">
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+    <div class="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">
+                        {{ message }}
+                        <button class="close-flash" onclick="this.parentElement.style.display='none';">&times;</button>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+    <button id="scrollTopBtn"><img class="up-arrow" src="{{ url_for('static', filename='images/up-arrow.png') }}"></button>
+    <div class="search-bar">
+        <form id="user-form" class="user-form" action="{{ url_for('user_action') }}" method="post">
+            <input type="number" id="user-id" name="user_id" placeholder="User ID">
+            <input type="text" id="name" name="name" placeholder="Name">
+            <input type="email" id="email" name="email" placeholder="Email">
+            <input type="password" id="password" name="password" placeholder="Password">
+            <input type="number" id="age" name="age" placeholder="Age">
+            <select id="gender" name="gender">
+                <option value="" hidden>Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+            <input type="hidden" id="selected-users" name="selected_users">
+            <input type="hidden" id="update-user-id" name="update_user_id">
+            <input type="hidden" id="clear-filter" name="clear_filter" value="false">
+        </form>
+        <button class="search-button" onclick="searchUser()"><img class="button-img" src="{{ url_for('static', filename='images/search.png') }}" alt="search icon"></img>Search</button>
+        <button class="clear-button" type="submit" form="user-form" name="action" value="clear" onclick="clearSearch()"><img class="button-img" src="{{ url_for('static', filename='images/clear.png') }}" alt="clear icon"></img>Clear</button>
+    </div>
+    <div class="action-buttons">
+        <button class="add-button" type="submit" name="action" value="add" form="user-form"><img class="button-img" src="{{ url_for('static', filename='images/add.png') }}" alt="add icon"></img>Add</button>
+        <button class="delete-button" type="submit" name="action" value="delete" form="user-form" onclick="collectSelected()"><img class="button-img" src="{{ url_for('static', filename='images/delete.png') }}" alt="delete icon"></img>Delete</button>
+        <button class="update-button" type="submit" name="action" value="update" form="user-form"><img class="button-img" src="{{ url_for('static', filename='images/update.png') }}" alt="update icon"></img>Update</button>
+        <button class="filter-button" type="submit" name="action" value="filter" form="user-form"><img class="button-img" src="{{ url_for('static', filename='images/filter.png') }}" alt="filter icon"></img>Filter</button>
+        <div class="sort-container">
+            <button class="sort-button" onclick="toggleSortMenu()"><img class="button-img" src="{{ url_for('static', filename='images/sort.png') }}" alt="sort icon"></img>Sort</button>
+            <div id="overlay" class="hidden"></div>
+            <div class="sort-menu hidden" id="sort-menu">
+                <h3>Sort By</h3>
+                <form id="sort-form" action="{{ url_for('user_action') }}" method="post">
+                    <select name="sort_by" id="sort-by">
+                        <option value="user_id">ID</option>
+                        <option value="age">Age</option>
+                        <option value="gender">Gender</option>
+                    </select>
+                    <h3 id="second-h3">Order</h3>
+                    <select name="sort_order" id="sort-order">
+                        <option value="ASC">Ascending</option>
+                        <option value="DESC">Descending</option>
+                    </select>
+                    <button type="submit" name="action" value="sort">Apply</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="navigation" class="hidden">
+        <button id="next-match-button" onclick="goToNextMatch()">Next Match</button>
+    </div>
+    <div class="list" id="user-list">
+        {% for user in users %}
+        <div class="table-card" id="user-card-{{ user['user_id'] }}">
+            <input type="checkbox" id="user-{{ loop.index }}" name="selected_users" value="{{ user['user_id'] }}">
+            <label for="user-{{ loop.index }}">
+                <p><strong>ID:</strong> <span class="user-id">{{ user['user_id'] }}</span></p>
+                <p><strong>Name:</strong> <span class="name">{{ user['name'] }}</span></p>
+                <p><strong>Email:</strong> <span class="email">{{ user['email'] }}</span></p>
+                <p><strong>Password:</strong> <span class="password">{{ user['password'] }}</span></p>
+                <p><strong>Age:</strong> <span class="age">{{ user['age'] }}</span></p>
+                <p><strong>Gender:</strong> <span class="gender">{{ user['gender'] }}</span></p>
+            </label>
+        </div>
+        {% endfor %}
+    </div>
+    <script src="{{ url_for('static', filename='js/users.js') }}"></script>
+</body>
+</html>
