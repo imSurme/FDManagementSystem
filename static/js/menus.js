@@ -4,14 +4,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateInputs(checkbox) {
         const card = checkbox.closest('.table-card');
-        const id = card.querySelector('.menu-id').textContent.trim();
-        const foodId = card.querySelector('.food-id').textContent.trim();
-        const cuisine = card.querySelector('.menu-cuisine').textContent.trim();
-        const price = card.querySelector('.menu-price').textContent.trim();
-        const restaurantId = card.querySelector('.menu-restaurant-id').textContent.trim();
+        const id = card.querySelector('.menu-id')?.textContent.trim() || '';
+        const name = card.querySelector('.menu-name')?.textContent.trim() || '';
+        const type = card.querySelector('.menu-type')?.textContent.trim() || '';
+        const cuisine = card.querySelector('.menu-cuisine')?.textContent.trim() || '';
+        const price = card.querySelector('.menu-price')?.textContent.trim() || '';
+        const restaurantId = card.querySelector('.menu-restaurant-id')?.textContent.trim() || '';
 
         document.getElementById('menu-id').value = id;
-        document.getElementById('food-id').value = foodId;
+        document.getElementById('food-name').value = name;
+        document.getElementById('food-type').value = type === 'Veg' ? 'Veg' : 'Non-veg';
         document.getElementById('menu-cuisine').value = cuisine;
         document.getElementById('menu-price').value = price;
         document.getElementById('menu-restaurant-id').value = restaurantId;
@@ -20,7 +22,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function clearInputs() {
         document.getElementById('menu-id').value = '';
-        document.getElementById('food-id').value = '';
+        document.getElementById('food-name').value = '';
+        document.getElementById('food-type').value = '';
         document.getElementById('menu-cuisine').value = '';
         document.getElementById('menu-price').value = '';
         document.getElementById('menu-restaurant-id').value = '';
@@ -30,17 +33,22 @@ document.addEventListener("DOMContentLoaded", function () {
     function handleCheckboxChange(event) {
         const checkbox = event.target;
         if (checkbox.checked) {
+            menuCards.forEach(card => {
+                const otherCheckbox = card.querySelector('input[type="checkbox"]');
+                if (otherCheckbox !== checkbox) {
+                    otherCheckbox.checked = false;
+                }
+            });
             lastCheckedBox = checkbox;
             updateInputs(checkbox);
-        } else if (lastCheckedBox === checkbox) {
+            
+            const card = checkbox.closest('.table-card');
+            const menuId = card.querySelector('.menu-id').textContent.trim();
+            document.getElementById('update-menu-id').value = menuId;
+        } else {
             lastCheckedBox = null;
-            const selectedCheckboxes = Array.from(document.querySelectorAll('#menu-list input[type="checkbox"]:checked'));
-            if (selectedCheckboxes.length > 0) {
-                lastCheckedBox = selectedCheckboxes[selectedCheckboxes.length - 1];
-                updateInputs(lastCheckedBox);
-            } else {
-                clearInputs();
-            }
+            clearInputs();
+            document.getElementById('update-menu-id').value = '';
         }
     }
 
@@ -50,12 +58,52 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+function collectSelected() {
+    const selectedCheckboxes = document.querySelectorAll('.table-card input[type="checkbox"]:checked');
+    const selectedIds = Array.from(selectedCheckboxes).map(checkbox => {
+        const card = checkbox.closest('.table-card');
+        return card.querySelector('.menu-id').textContent.trim();
+    });
+    
+    if (selectedIds.length === 0) {
+        alert("Please select at least one menu item.");
+        return false;
+    }
+    
+    console.log("Selected IDs:", selectedIds);
+    document.getElementById('selected-menu-items').value = selectedIds.join(',');
+    console.log("Form value:", document.getElementById('selected-menu-items').value);
+    return true;
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    const deleteButton = document.querySelector('.delete-button');
+    if (deleteButton) {
+        deleteButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (collectSelected()) {
+                const form = document.getElementById('menu-form');
+                // Ensure the action is set to delete
+                const actionInput = document.createElement('input');
+                actionInput.type = 'hidden';
+                actionInput.name = 'action';
+                actionInput.value = 'delete';
+                form.appendChild(actionInput);
+                
+                console.log("Form being submitted with data:", new FormData(form));
+                form.submit();
+            }
+        });
+    }
+});
+
 let matchedCards = [];
 let currentMatchIndex = 0;
 
 function searchMenu() {
     const idInput = document.getElementById('menu-id').value.trim().toLowerCase();
     const foodNameInput = document.getElementById('food-name').value.trim().toLowerCase();
+    const foodTypeInput = document.getElementById('food-type').value.trim();
     const cuisineInput = document.getElementById('menu-cuisine').value.trim().toLowerCase();
     const priceInput = document.getElementById('menu-price').value.trim().toLowerCase();
     const restaurantIdInput = document.getElementById('menu-restaurant-id').value.trim().toLowerCase();
@@ -63,7 +111,7 @@ function searchMenu() {
     matchedCards = [];
     currentMatchIndex = -1;
 
-    if (!idInput && !foodNameInput && !cuisineInput && !priceInput && !restaurantIdInput) {
+    if (!idInput && !foodNameInput && !foodTypeInput && !cuisineInput && !priceInput && !restaurantIdInput) {
         alert("Please enter at least one search criterion.");
         return;
     }
@@ -73,6 +121,7 @@ function searchMenu() {
     cards.forEach(card => {
         const id = card.querySelector('.menu-id').textContent.toLowerCase();
         const foodName = card.querySelector('.menu-name').textContent.toLowerCase();
+        const foodType = card.querySelector('.menu-type').textContent;
         const cuisine = card.querySelector('.menu-cuisine').textContent.toLowerCase();
         const price = card.querySelector('.menu-price').textContent.toLowerCase();
         const restaurantId = card.querySelector('.menu-restaurant-id').textContent.toLowerCase();
@@ -80,6 +129,7 @@ function searchMenu() {
         if (
             (!idInput || id.includes(idInput)) &&
             (!foodNameInput || foodName.includes(foodNameInput)) &&
+            (!foodTypeInput || foodType === foodTypeInput) &&
             (!cuisineInput || cuisine.includes(cuisineInput)) &&
             (!priceInput || price.includes(priceInput)) &&
             (!restaurantIdInput || restaurantId.includes(restaurantIdInput))
@@ -132,17 +182,6 @@ function clearSearch() {
     document.getElementById('navigation').classList.add('hidden');
 }
 
-function collectSelected() {
-    const selectedItems = [];
-    const checkboxes = document.querySelectorAll('#menu-list input[type="checkbox"]:checked');
-
-    checkboxes.forEach(checkbox => {
-        selectedItems.push(checkbox.value);
-    });
-
-    document.getElementById('selected-menu-items').value = selectedItems.join(',');
-}
-
 const scrollTopBtn = document.getElementById("scrollTopBtn");
 
 function checkScrollPosition() {
@@ -193,4 +232,47 @@ document.addEventListener("DOMContentLoaded", function () {
             msg.style.display = "none";
         }, 5000);
     });
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    const updateButton = document.querySelector('.update-button');
+    if (updateButton) {
+        updateButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            const updateMenuId = document.getElementById('update-menu-id').value;
+            if (!updateMenuId) {
+                alert('Please select a menu item to update.');
+                return;
+            }
+            
+            const form = document.getElementById('menu-form');
+            // Set the action value before submitting
+            document.getElementById('form-action').value = 'update';
+            
+            const formData = new FormData(form);
+            console.log('Form data being sent:', {
+                action: formData.get('action'),
+                update_menu_id: formData.get('update_menu_id'),
+                name: formData.get('name'),
+                food_type: formData.get('food_type'),
+                cuisine: formData.get('cuisine'),
+                price: formData.get('price'),
+                restaurant_id: formData.get('restaurant_id')
+            });
+            
+            form.submit();
+        });
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    const addButton = document.querySelector('.add-button');
+    if (addButton) {
+        addButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            const form = document.getElementById('menu-form');
+            document.getElementById('form-action').value = 'add';
+            form.submit();
+        });
+    }
 });
