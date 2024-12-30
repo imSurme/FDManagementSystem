@@ -1,3 +1,4 @@
 -users.csv were added.
 -Users table was created in schema file.
 -Data inserted to Users table in data file.
+-Updated users.py, users.html and users.js files.
