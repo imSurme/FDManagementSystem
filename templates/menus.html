@@ -47,14 +47,16 @@
             <input type="number" id="menu-price" name="price" placeholder="Price">
             <input type="number" id="menu-restaurant-id" name="restaurant_id" placeholder="Restaurant ID">
         </form>
-        <button class="search-button" onclick="searchMenu()"><img class="button-img" src="{{ url_for('static', filename='images/search.png') }}" alt="search icon"></img>Search</button>
-        <button class="clear-button" type="submit" form="menu-form" name="action" value="clear" onclick="clearSearch()"><img class="button-img" src="{{ url_for('static', filename='images/clear.png') }}" alt="clear icon"></img>Clear</button>
+        <button class="search-button" onclick="searchMenu()"><img class="button-img" src="{{ url_for('static', filename='images/search.png') }}" alt="search icon">Search</button>
+        <button class="clear-button" type="submit" form="menu-form" name="action" value="clear" onclick="clearSearch()"><img class="button-img" src="{{ url_for('static', filename='images/clear.png') }}" alt="clear icon">Clear</button>
     </div>
     <div class="action-buttons">
         <button class="add-button" type="submit" name="action" value="add" form="menu-form"><img class="button-img" src="{{ url_for('static', filename='images/add.png') }}" alt="add icon">Add</button>
         <button class="delete-button" type="submit" name="action" value="delete" form="menu-form"><img class="button-img" src="{{ url_for('static', filename='images/delete.png') }}" alt="delete icon">Delete</button>
         <button class="update-button" type="submit" name="action" value="update" form="menu-form"><img class="button-img" src="{{ url_for('static', filename='images/update.png') }}" alt="update icon">Update</button>
-        <button class="filter-button" type="submit" name="action" value="filter" form="menu-form"><img class="button-img" src="{{ url_for('static', filename='images/filter.png') }}" alt="filter icon"></img>Filter</button>
+        <button type="submit" class="filter-button" name="action" value="filter" form="menu-form">
+            <img class="button-img" src="{{ url_for('static', filename='images/filter.png') }}" alt="filter icon">Filter
+        </button>
         <div class="sort-container">
             <button class="sort-button" onclick="toggleSortMenu()"><img class="button-img" src="{{ url_for('static', filename='images/sort.png') }}" alt="sort icon"></img>Sort</button>
             <div id="overlay" class="hidden"></div>
