@@ -84,12 +84,12 @@ function searchFood() {
     cards.forEach(card => card.classList.remove('highlight'));
 
     cards.forEach(card => {
-        const id = card.querySelector('.food-id').textContent.toLowerCase();
+        const id = card.querySelector('.food-id').textContent.trim();
         const name = card.querySelector('.food-name').textContent.toLowerCase();
         const type = card.querySelector('.food-type').textContent;
 
         if (
-            (!idInput || id.includes(idInput)) &&
+            (!idInput || id === idInput) &&
             (!nameInput || name.includes(nameInput)) &&
             (!typeInput || type === typeInput)
         ) {
