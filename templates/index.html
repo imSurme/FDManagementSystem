@@ -50,7 +50,7 @@
     </div>
     <div class="card-container">
         <div class="card">
-            <a href="">
+            <a href="{{ url_for('users') }}">
                 <div class="container">
                     <img src="{{ url_for('static', filename='images/user.png') }}" alt="user icon">
                     <h4>{{ 'Profile' if session['role'] == 'user' else 'Users' }}</h4>
