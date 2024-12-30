@@ -66,15 +66,15 @@
             </a>
         </div>
         <div class="card">
-            <a href="">
+            <a href="{{ url_for('menus') }}">
                 <div class="container">
-                    <img src="{{ url_for('static', filename='images/menu.png') }}" alt="menu icon">
+                    <img src="{{ url_for('static', filename='images/menus.png') }}" alt="menu icon">
                     <h4>{{ 'Menu' if session['role'] == 'user' else 'Menus' }}</h4>
                 </div>
             </a>
         </div>
         <div class="card">
-            <a href="">
+            <a href="{{ url_for('foods') }}">
                 <div class="container">
                     <img src="{{ url_for('static', filename='images/food.png') }}" alt="food icon">
                     <h4>Foods</h4>
