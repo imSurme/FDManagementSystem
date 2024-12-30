@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foods</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <nav>
+        <div class="logo navbar">
+            <a href="/"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo"></a>
+            <h1><a href="/">Food Delivery Management System</a> / <span style="margin-left: 10px; color: white">Foods</span></h1>
+        </div>
+        <ul class="navbar">
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+    <div class="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">
+                        {{ message }}
+                        <button class="close-flash" onclick="this.parentElement.style.display='none';">&times;</button>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+    <button id="scrollTopBtn"><img class="up-arrow" src="{{ url_for('static', filename='images/up-arrow.png') }}"></button>
+    <div class="search-bar">
+        <form id="food-form" class="food-form" action="{{ url_for('food_action') }}" method="post">
+            <input type="hidden" id="selected-food-items" name="selected_food_items">
+            <input type="hidden" id="update-food-id" name="update_food_id">
+            <input type="hidden" id="form-action" name="action" value="">
+            <input type="number" id="food-id" name="food_id" placeholder="Food ID">
+            <input type="text" id="food-name" name="name" placeholder="Food Name">
+            <select id="food-type" name="food_type" aria-label="Select food type">
+                <option value="">Select Type</option>
+                <option value="Veg">Veg</option>
+                <option value="Non-veg">Non-veg</option>
+            </select>
+        </form>
+        <button class="search-button" onclick="searchFood()"><img class="button-img" src="{{ url_for('static', filename='images/search.png') }}" alt="search icon">Search</button>
+        <button class="clear-button" type="submit" form="food-form" name="action" value="clear" onclick="clearSearch()"><img class="button-img" src="{{ url_for('static', filename='images/clear.png') }}" alt="clear icon">Clear</button>
+    </div>
+    <div class="action-buttons">
+        <button class="add-button" type="submit" name="action" value="add" form="food-form"><img class="button-img" src="{{ url_for('static', filename='images/add.png') }}" alt="add icon">Add</button>
+        <button class="delete-button" type="submit" name="action" value="delete" form="food-form"><img class="button-img" src="{{ url_for('static', filename='images/delete.png') }}" alt="delete icon">Delete</button>
+        <button class="update-button" type="submit" name="action" value="update" form="food-form"><img class="button-img" src="{{ url_for('static', filename='images/update.png') }}" alt="update icon">Update</button>
+        <button type="submit" class="filter-button" name="action" value="filter" form="food-form">
+            <img class="button-img" src="{{ url_for('static', filename='images/filter.png') }}" alt="filter icon">Filter
+        </button>
+        <div class="sort-container">
+            <button class="sort-button">
+                <img class="button-img" src="{{ url_for('static', filename='images/sort.png') }}" alt="sort icon">Sort
+            </button>
+            <div id="overlay" class="hidden"></div>
+            <div class="sort-menu hidden" id="sort-menu">
+                <h3>Sort By</h3>
+                <form id="sort-form" action="{{ url_for('food_action') }}" method="post">
+                    <input type="hidden" name="action" value="sort">
+                    <select name="sort_by" id="sort-by">
+                        <option value="food_id">ID</option>
+                        <option value="item_name">Name</option>
+                        <option value="veg_or_non_veg">Type</option>
+                    </select>
+                    <h3 id="second-h3">Order</h3>
+                    <select name="sort_order" id="sort-order">
+                        <option value="ASC">Ascending</option>
+                        <option value="DESC">Descending</option>
+                    </select>
+                    <button type="submit">Apply</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="navigation" class="hidden">
+        <button id="next-match-button" onclick="goToNextMatch()">Next Match</button>
+    </div>
+    <div class="list" id="food-list">
+        {% for item in foods %}
+        <div class="table-card" id="food-card-{{ item['food_id'] }}">
+            <input type="checkbox" id="food-{{ loop.index }}" name="selected_food_items" value="{{ item['food_id'] }}">
+            <label for="food-{{ loop.index }}">
+                <p><strong>ID:</strong> <span class="food-id">{{ item['food_id'] }}</span></p>
+                <p><strong>Name:</strong> <span class="food-name">{{ item['item_name'] }}</span></p>
+                <p><strong>Type:</strong> <span class="food-type">{{ item['veg_or_non_veg'] }}</span></p>
+                <p><strong>Used in Menus:</strong> <span class="menu-count">{{ item['menu_count'] }}</span></p>
+            </label>
+        </div>
+        {% endfor %}
+    </div>
+    <script src="{{ url_for('static', filename='js/foods.js') }}"></script>
+</body>
+</html> 
