@@ -4,8 +4,9 @@ from index import index
 from auth import login, logout
 from restaurants import restaurants, restaurant_action
 from couriers import couriers, courier_action
-from menu import menu, menu_action
+from menus import menus, menus_action
 from orders import orders, order_action
+from foods import foods, food_action
 
 app = Flask(__name__)
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -20,10 +21,12 @@ app.add_url_rule('/restaurants', 'restaurants', restaurants)
 app.add_url_rule('/restaurants', 'restaurant_action', restaurant_action, methods=['POST'])
 app.add_url_rule('/couriers', 'couriers', couriers)
 app.add_url_rule('/couriers', 'courier_action', courier_action, methods=['POST'])
-app.add_url_rule('/menu', 'menu', menu)
-app.add_url_rule('/menu', 'menu_action', menu_action, methods=['POST'])
+app.add_url_rule('/menus', 'menus', menus)
+app.add_url_rule('/menus', 'menus_action', menus_action, methods=['POST'])
 app.add_url_rule('/orders', 'orders', orders)
 app.add_url_rule('/orders', 'order_action', order_action, methods=['POST'])
+app.add_url_rule('/foods', 'foods', foods)
+app.add_url_rule('/foods', 'food_action', food_action, methods=['POST'])
 
 if __name__ == '__main__':
     app.run(debug=True)
