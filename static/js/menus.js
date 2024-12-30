@@ -276,3 +276,27 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
+
+document.addEventListener("DOMContentLoaded", function() {
+    const menuForm = document.getElementById('menu-form');
+    
+    menuForm.addEventListener('submit', function(e) {
+        const submitter = e.submitter;
+        if (submitter && submitter.name === 'action') {
+            document.getElementById('form-action').value = submitter.value;
+        }
+    });
+
+    // Update the clear search function
+    window.clearSearch = function() {
+        document.getElementById('menu-id').value = "";
+        document.getElementById('food-name').value = "";
+        document.getElementById('food-type').value = "";
+        document.getElementById('menu-cuisine').value = "";
+        document.getElementById('menu-price').value = "";
+        document.getElementById('menu-restaurant-id').value = "";
+        
+        document.getElementById('form-action').value = 'clear';
+        menuForm.submit();
+    };
+});
