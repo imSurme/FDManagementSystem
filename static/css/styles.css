@@ -523,3 +523,36 @@ img {
     border: 1px solid #ddd;
     border-radius: 5px;
 }
+
+.menu-form {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+/* Add these styles for select elements in the menu form */
+.menu-form select {
+    display: block;
+    width: 120px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    height: 38px;
+    background-color: white;
+}
+
+/* Optional: Style the dropdown arrow */
+.menu-form select::-ms-expand {
+    display: none;
+}
+
+.menu-form select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    padding-right: 30px;
+}
