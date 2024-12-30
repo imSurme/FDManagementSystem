@@ -281,7 +281,7 @@ img {
     background-color: #0056b3;
 }
 
-.courier-form, .restaurant-form {
+.courier-form, .restaurant-form, .user-form {
     display: flex;
     flex-direction: row;
     gap: 10px;
@@ -473,7 +473,7 @@ img {
     border-radius: 5px;
 }
 
-#courier-gender {
+#courier-gender, #gender {
     width: 100%;
     height: 38px;
     padding: 10px;
