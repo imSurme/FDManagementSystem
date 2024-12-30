@@ -70,9 +70,7 @@ function collectSelected() {
         return false;
     }
     
-    console.log("Selected IDs:", selectedIds);
     document.getElementById('selected-menu-items').value = selectedIds.join(',');
-    console.log("Form value:", document.getElementById('selected-menu-items').value);
     return true;
 }
 
@@ -83,14 +81,8 @@ document.addEventListener("DOMContentLoaded", function() {
             e.preventDefault();
             if (collectSelected()) {
                 const form = document.getElementById('menu-form');
-                // Ensure the action is set to delete
-                const actionInput = document.createElement('input');
-                actionInput.type = 'hidden';
-                actionInput.name = 'action';
-                actionInput.value = 'delete';
-                form.appendChild(actionInput);
-                
-                console.log("Form being submitted with data:", new FormData(form));
+                // Set the action value
+                document.getElementById('form-action').value = 'delete';
                 form.submit();
             }
         });
@@ -127,7 +119,7 @@ function searchMenu() {
         const restaurantId = card.querySelector('.menu-restaurant-id').textContent.toLowerCase();
 
         if (
-            (!idInput || id.includes(idInput)) &&
+            (!idInput || id === idInput) &&
             (!foodNameInput || foodName.includes(foodNameInput)) &&
             (!foodTypeInput || foodType === foodTypeInput) &&
             (!cuisineInput || cuisine.includes(cuisineInput)) &&
